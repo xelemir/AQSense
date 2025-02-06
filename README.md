@@ -54,7 +54,7 @@ Description=Web Server for AQSense
 After=network.target
 
 [Service]
-User=jan
+User=USERNAME
 WorkingDirectory=/home/USERNAME/AQSense
 ExecStart=/home/USERNAME/AQSense/.venv/bin/python /home/USERNAME/AQSense/web_app.py
 Restart=always
@@ -73,7 +73,7 @@ Description=Measure Air Quality and Log to SQLite DB
 After=network.target sound.target
 
 [Service]
-User=jan
+User=USERNAME
 WorkingDirectory=/home/USERNAME/AQSense
 ExecStart=/home/USERNAME/AQSense/.venv/bin/python /home/USERNAME/AQSense/main.py
 ExecStop=/home/Python/AQSense/.venv/bin/python /home/Python/AQSense/stop_script.py
