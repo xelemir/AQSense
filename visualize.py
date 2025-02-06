@@ -85,7 +85,8 @@ def visualize_data(range_="last_2_hours"):
         verified_binned.append(dt_bin)
 
     # Verified points at some fixed y-value (example: y=1)
-    verified_y_values = [1] * len(verified_binned)
+    max_y = max(data_binned)
+    verified_y_values = [max_y] * len(verified_binned)
 
     # --------------------------------------------------------
     # 3) Plot
@@ -102,7 +103,7 @@ def visualize_data(range_="last_2_hours"):
 
     # Plot the verified data
     #ax.scatter(verified_binned, verified_y_values, color='red')
-    ax.bar(verified_binned, width=0.0005, color='red')
+    ax.bar(verified_binned, verified_y_values, width=0.0005, color='red')
 
     # Format the x-axis as dates/times
     if range_ == "total":
