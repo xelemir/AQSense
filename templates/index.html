@@ -35,6 +35,7 @@
             cursor: pointer;
             margin: 20px;
             margin-top: 30px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -49,7 +50,7 @@
         .interval-button {
             background-color: transparent;
             color: #c7c7c7;
-            padding: 5px 10px;
+            padding: 5px 0;
             border: none;
             border-radius: 20px;
             font-size: 12px;
@@ -58,7 +59,8 @@
             align-items: center;
             justify-content: center;
             gap: 5px;
-            transition: background-color 0.3s ease;
+            width: 40px;
+            transition: background-color 0.5s ease;
         }
 
         .desktop-only {
@@ -78,6 +80,21 @@
                 display: none;
             }
         }
+
+        /* Remove default appearance (works in many modern browsers) */
+        input[type="date"] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border: none;
+        background: transparent;
+        }
+
+        .invisible-date {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none; /* Prevent user interaction */
+          }
     </style>
 </head>
 <body>
@@ -96,20 +113,26 @@
             </span>
         </span>
         <span style="background-color: #2b2b2f; padding: 10px; border-radius: 20px; display: flex; align-items: center; padding: 0;">
-            <button class="interval-button" style="margin: 0; padding: 2px 5px; font-size: 12px; gap: 5px;" onclick="changeInterval(this, 'total')">
+            <button class="interval-button" style="margin: 0; padding: 2px 5px; font-size: 12px; gap: 5px; width: 25px;" onclick="changeOffset(this, 1)">
+                <span class="material-symbols-rounded" style="font-size: 1.1em;">arrow_back_ios</span>
+            </button>
+            <button class="interval-button" style="margin: 0; padding: 2px 0px; font-size: 12px; gap: 5px;" onclick="changeInterval(this, 'total')">
                 Total
             </button>
             <button class="interval-button" style="margin: 0; padding: 2px 5px; font-size: 12px; gap: 5px;" onclick="changeInterval(this, 'today')">
                 Today
             </button>
             <button class="interval-button" style="margin: 0; padding: 2px 5px; font-size: 12px; gap: 5px;" onclick="changeInterval(this, 'last_2_hours')">
-                Last 2h
+                2h
             </button>
             <button class="interval-button" style="margin: 0; padding: 2px 5px; font-size: 12px; gap: 5px;" onclick="changeInterval(this, 'last_30_min')">
-                Last 30min
+                30m
             </button>
             <button class="interval-button" style="margin: 0; padding: 2px 5px; font-size: 12px; gap: 5px; background-color: #4e4ad9;" onclick="changeInterval(this, 'last_10_min')">
-                Last 10min
+                10m
+            </button>
+            <button class="interval-button" style="margin: 0; padding: 2px 0px; font-size: 12px; gap: 5px; width: 25px;" onclick="changeOffset(this, -1)">
+                <span class="material-symbols-rounded" style="font-size: 1.1em;">arrow_forward_ios</span>
             </button>
             <span class="mobile-only" style="color: #c7c7c7; font-size: 14px; padding: 0 5px;">
                 <span id="quality-indicator" style="background-color: rgb(253, 226, 47); width: 10px; height: 10px; border-radius: 20px; transition: background-color 0.6s ease;"></span>
@@ -117,25 +140,52 @@
         </span>
     </span>
     <img id="graph" src="/image/last_10_min" style="margin: 20px; width: 700px; max-width: 80vw; margin: 0;" />
-        
+    
+    <input type="datetime-local" id="dateInput" style="display: none;" class="invisible-date" />
     <button id="log-button" onclick="setMarker()">
         <span id="log-button-icon" class="material-symbols-rounded" style="font-size: 24px;">warning</span>
         Log Bad Air Quality
     </button>
+    <span id="cancel-logging" onclick="cancelLogging()" style="color: #c7c7c7; font-size: 12px; margin-top: 0px; display: none; cursor: pointer;">Cancel</span>
 </body>
 </html>
 
 <script>
+    var global_offset = 0;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('dateInput').addEventListener('change', () => {
+            if (document.getElementById('dateInput').value !== '') {
+                var localizedDate = new Date(document.getElementById('dateInput').value);
+                document.getElementById('log-button-icon').nextSibling.nodeValue = localizedDate.toLocaleString('de-DE', { timeZone: 'Europe/Berlin' });
+                document.getElementById('log-button-icon').innerText = 'save';
+                document.getElementById('cancel-logging').style.display = 'flex';
+            }
+        });
+    });
+
+    function cancelLogging() {
+        document.getElementById('log-button-icon').innerText = 'warning';
+        document.getElementById('log-button-icon').nextSibling.nodeValue = 'Log Bad Air Quality';
+        document.getElementById('cancel-logging').style.display = 'none';
+    }
+
     function setMarker() {
+        // let user pick date and time from calendar
+        
+        if (document.getElementById('cancel-logging').style.display === 'none') {
+            document.getElementById('dateInput').showPicker();
+            return;
+        }
+
         document.getElementById('log-button-icon').innerText = 'check';
         document.getElementById('log-button').disabled = true;
         document.getElementById('log-button').style.cursor = 'not-allowed';
-        document.getElementById('log-button').style.fontSize = '18px';
         setTimeout(() => {
-            document.getElementById('log-button-icon').innerText = 'bolt';
+            document.getElementById('log-button-icon').innerText = 'warning';
             document.getElementById('log-button').disabled = false;
             document.getElementById('log-button').style.cursor = 'pointer';
-            document.getElementById('log-button').style.fontSize = '16px';
+            document.getElementById('log-button-icon').nextSibling.nodeValue = 'Log Bad Air Quality';
         }, 1000);
 
         fetch('/set_marker', {
@@ -144,15 +194,16 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                marker: true
+                date: document.getElementById('dateInput').value
             })
         }).then(response => {
-            document.getElementById('graph').src = '/image?' + new Date().getTime();
+            document.getElementById('graph').src = '/image/last_10_min?' + new Date().getTime();
         });
     }
 
     function changeInterval(button, interval) {
-        document.getElementById('graph').src = '/image/last_10_min' + interval + '?' + new Date().getTime();
+        global_offset = 0;
+        document.getElementById('graph').src = '/image/' + interval + '?' + new Date().getTime();
 
         const buttons = document.getElementsByClassName('interval-button');
         for (let i = 0; i < buttons.length; i++) {
@@ -160,6 +211,28 @@
         }
         
         button.style.backgroundColor = '#4e4ad9';
+    }
+
+    function changeOffset(button, offset) {
+        var interval_buttons = document.getElementsByClassName('interval-button');
+        var interval = '';
+
+        for (let i = 0; i < interval_buttons.length; i++) {
+            if (interval_buttons[i].style.backgroundColor === 'rgb(78, 74, 217)') {
+                interval = interval_buttons[i].innerText;
+                break;
+            }
+        }
+        
+        global_offset += offset;
+
+        if (interval === '10m') {
+            document.getElementById('graph').src = '/image/last_10_min?offset=' + global_offset + '&t=' + new Date().getTime();
+        } else if (interval === '30m') {
+            document.getElementById('graph').src = '/image/last_30_min?offset=' + global_offset + '&t=' + new Date().getTime();
+        } else if (interval === '2h') {
+            document.getElementById('graph').src = '/image/last_2_hours?offset=' + global_offset + '&t=' + new Date().getTime();
+        }
     }
 
     document.onload = () => {

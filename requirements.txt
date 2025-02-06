@@ -3,3 +3,4 @@ matplotlib
 Flask
 psutil
 pyserial
+pytz

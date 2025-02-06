@@ -1,5 +1,6 @@
+import datetime
 import os
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask import send_file, render_template
 from visualize import visualize_data
 from sensor import calculate_lqi_pm25
@@ -24,14 +25,17 @@ def logo():
 
 @app.route('/image/<range_>')
 def image(range_):
-    visualize_data(range_)
+    offset = int(request.args.get('offset', 0))
+    visualize_data(range_, offset)
     return send_file("data/plot.png", mimetype='image/png')
 
 @app.route('/set_marker', methods=['POST'])
 def set_marker():
     sql = SqlConnector("database.db")
     sql.create_table("markers")
-    sql.insert_marker()
+    
+    date = request.json["date"]    
+    sql.insert_marker(date) 
     return jsonify({"status": "success"})
 
 @app.route('/get_lqi_label', methods=['GET'])

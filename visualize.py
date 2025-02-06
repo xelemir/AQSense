@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from datetime import datetime, timedelta
 from sql_connector import SqlConnector
+import pytz
 
 def round_down_to_x_minutes(dt, x):
     """
@@ -23,7 +24,7 @@ def round_down_to_day(dt):
     """
     return dt.replace(hour=0, minute=0, second=0, microsecond=0)
 
-def visualize_data(range_="last_2_hours"):
+def visualize_data(range_="last_2_hours", offset=0):
     # Decide on binning function based on the range_
     if range_ == "today":
         bin_size_minutes = 10
@@ -46,8 +47,8 @@ def visualize_data(range_="last_2_hours"):
         bin_func = lambda d: round_down_to_x_minutes(d, bin_size_minutes)
 
     sql = SqlConnector("database.db")
-    data = sql.get_particles(range_)
-    verified_data = sql.get_marker_times(range_)
+    data = sql.get_particles(range_, offset)
+    verified_data = sql.get_marker_times(range_, offset)
 
     # --------------------------------------------------------
     # 1) Group data by the chosen binning function
@@ -58,6 +59,12 @@ def visualize_data(range_="last_2_hours"):
         data_value = entry[2]
         
         dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M:%S")
+        
+        # utc to germany timezone
+        germany_tz = pytz.timezone("Europe/Berlin")
+        dt = pytz.utc.localize(dt).astimezone(germany_tz)
+        
+        
         dt_bin = bin_func(dt)         # Round down to the bin
 
         grouped.setdefault(dt_bin, []).append(data_value)
@@ -81,17 +88,22 @@ def visualize_data(range_="last_2_hours"):
     for entry in verified_data:
         dt_str = entry[1]
         dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M:%S")
+        
+        # utc to germany timezone
+        germany_tz = pytz.timezone("Europe/Berlin")
+        dt = pytz.utc.localize(dt).astimezone(germany_tz)
+        
         dt_bin = bin_func(dt)
         verified_binned.append(dt_bin)
 
-    # Verified points at some fixed y-value (example: y=1)
-    max_y = max(data_binned)
-    verified_y_values = [max_y] * len(verified_binned)
+    # Verified points at the maximum value of the data for that bin
+    y = max(data_binned + [0])
+    verified_y_values = [y] * len(verified_binned)
 
     # --------------------------------------------------------
     # 3) Plot
     # --------------------------------------------------------
-    fig, ax = plt.subplots(figsize=(20, 10))
+    fig, ax = plt.subplots(figsize=(15, 8))
     fig.patch.set_facecolor('#22222a')  # Figure background
     ax.set_facecolor('#22222a')         # Axes background
 
@@ -102,8 +114,8 @@ def visualize_data(range_="last_2_hours"):
     ax.scatter(times_binned, data_binned_max, color='#4e4ad9')
 
     # Plot the verified data
-    #ax.scatter(verified_binned, verified_y_values, color='red')
-    ax.bar(verified_binned, verified_y_values, width=0.0003, color='red', alpha=0.5)
+    ax.scatter(verified_binned, verified_y_values, color='red')
+    #ax.bar(verified_binned, verified_y_values, width=0.0003, color='red', alpha=0.5)
     
     # Format the x-axis as dates/times
     if range_ == "total":
@@ -120,6 +132,9 @@ def visualize_data(range_="last_2_hours"):
         spine.set_edgecolor('#22222a')
 
     ax.grid(True, color='gray', linestyle='--', linewidth=0.5)
+    
+    # legend and labels
+    ax.set_ylabel("PM2.5 (µg/m³)", color='white')
 
     plt.tight_layout()
     plt.savefig('data/plot.png')
