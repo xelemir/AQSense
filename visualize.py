@@ -103,8 +103,8 @@ def visualize_data(range_="last_2_hours"):
 
     # Plot the verified data
     #ax.scatter(verified_binned, verified_y_values, color='red')
-    ax.bar(verified_binned, verified_y_values, width=0.0005, color='red')
-
+    ax.bar(verified_binned, verified_y_values, width=0.0003, color='red', alpha=0.5)
+    
     # Format the x-axis as dates/times
     if range_ == "total":
         date_format = mdates.DateFormatter("%Y-%m-%d")
