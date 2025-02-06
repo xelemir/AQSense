@@ -181,6 +181,7 @@
         document.getElementById('log-button-icon').innerText = 'check';
         document.getElementById('log-button').disabled = true;
         document.getElementById('log-button').style.cursor = 'not-allowed';
+        document.getElementById('cancel-logging').style.display = 'none';
         setTimeout(() => {
             document.getElementById('log-button-icon').innerText = 'warning';
             document.getElementById('log-button').disabled = false;
