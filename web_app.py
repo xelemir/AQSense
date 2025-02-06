@@ -191,4 +191,4 @@ def clear_db():
 
 if __name__ == '__main__':
     # Bind to 0.0.0.0 so the app is accessible on your local networkt
-    app.run(host='0.0.0.0', port=1337, debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True)

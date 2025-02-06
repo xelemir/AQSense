@@ -25,6 +25,7 @@ cd AQSense
 
 Create and activate a Python virtual environment:
 ```bash
+python3 -m venv .venv
 source .venv/bin/activate
 ```
 
@@ -69,14 +70,14 @@ WantedBy=multi-user.target
 Create another service file (for example, /etc/systemd/system/air_quality.service) with the following content:
 ```ini
 [Unit]
-Description=Measure Air Quality and Log to SQLite DB
+Description=Air Quality Measurement for AQSense
 After=network.target sound.target
 
 [Service]
 User=USERNAME
 WorkingDirectory=/home/USERNAME/AQSense
 ExecStart=/home/USERNAME/AQSense/.venv/bin/python /home/USERNAME/AQSense/main.py
-ExecStop=/home/Python/AQSense/.venv/bin/python /home/Python/AQSense/stop_script.py
+ExecStop=/home/Python/AQSense/.venv/bin/python /home/USERNAME/AQSense/stop_script.py
 Restart=always
 RestartSec=5
 
