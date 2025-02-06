@@ -1,6 +1,4 @@
-from push_notifications import PushNotification
 from sensor import SDS011
-from audio_recorder import AudioRecorder
 from sql_connector import SqlConnector
 import time
 
