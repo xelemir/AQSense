@@ -59,7 +59,7 @@ def visualize_data(range_="last_2_hours", offset=0):
         try:
             dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M:%S")
         except ValueError:
-            dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M%z")
+            dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M:%S%z")
         dt_bin = bin_func(dt)         # Round down to the bin
 
         grouped.setdefault(dt_bin, []).append(data_value)
@@ -85,7 +85,7 @@ def visualize_data(range_="last_2_hours", offset=0):
         try:
             dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M:%S")
         except ValueError:
-            dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M%z")
+            dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M:%S%z")
         dt_bin = bin_func(dt)
         verified_binned.append(dt_bin)
 
