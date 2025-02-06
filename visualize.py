@@ -82,6 +82,8 @@ def visualize_data(range_="last_2_hours", offset=0):
     verified_binned = []
     for entry in verified_data:
         dt_str = entry[1]
+        raise ValueError(dt_str)
+        
         try:
             dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M:%S")
         except ValueError:
