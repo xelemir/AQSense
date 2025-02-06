@@ -120,7 +120,7 @@ sudo systemctl disable air_quality.service
 
 ## Usage
 
-Now that the services are running, you can access the web server by navigating to http://<HOSTNAME> in your web browser. The web server provides real-time visualization of the air quality data collected by the SDS011 sensor (Replace <HOSTNAME> with the actual hostname or IP address of your device, e.g. the Raspberry Pi).
+Now that the services are running, you can access the web server by navigating to http://<HOSTNAME>:1337 in your web browser. The web server provides real-time visualization of the air quality data collected by the SDS011 sensor (Replace <HOSTNAME> with the actual hostname or IP address of your device, e.g. the Raspberry Pi).
 
 ## Acknowledgments
 
