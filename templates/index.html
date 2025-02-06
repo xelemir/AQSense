@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>Home</title>
+    <link rel="icon" href="/logo.png" type="image/png" sizes="16x16">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #22222a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100svh;
+        }
+
+        button {
+            font-family: 'Nunito', sans-serif;
+            background-color: #4e4ad9;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 20px;
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        #log-button:hover {
+            background-color: #3c39b3;
+        }
+
+        .interval-button {
+            background-color: transparent;
+            color: #c7c7c7;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .desktop-only {
+            display: none;
+        }
+
+        .mobile-only {
+            display: flex;
+        }
+
+        @media(min-width: 1000px) {
+            .desktop-only {
+                display: flex;
+            }
+
+            .mobile-only {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/dashboard" style="text-decoration: none; position: absolute; top: 20px; left: 20px; color: #c7c7c7; display: flex; align-items: center; gap: 5px;">
+        <span class="material-symbols-rounded">security</span>
+        <span>Dashboard</span>
+    </a>
+    <h1 style="color: #fff; text-align: center; margin-bottom: -5px;">Air Quality Monitoring</h1>
+    <p style="color: #c7c7c7; text-align: center; font-size: 12px; margin-bottom: 30px; max-width: 70vw;">Monitor Air Quality in Real-Time and compare to subjective data</p>
+    <span style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; width: 700px; max-width: 80vw; gap: 0px;">
+        <span style="padding: 10px; display: flex; align-items: center; padding: 0;">
+            <span class="desktop-only" style="color: #c7c7c7; font-size: 14px; margin-right: 10px; align-items: center; gap: 5px;">
+                <span class="material-symbols-rounded">lens_blur</span>
+                Air Quality: 
+                <span id="quality" style="color: rgb(253, 226, 47); transition: color 0.6s ease;">Updating...</span>
+            </span>
+        </span>
+        <span style="background-color: #2b2b2f; padding: 10px; border-radius: 20px; display: flex; align-items: center; padding: 0;">
+            <button class="interval-button" style="margin: 0; padding: 2px 5px; font-size: 12px; gap: 5px;" onclick="changeInterval(this, 'total')">
+                Total
+            </button>
+            <button class="interval-button" style="margin: 0; padding: 2px 5px; font-size: 12px; gap: 5px;" onclick="changeInterval(this, 'today')">
+                Today
+            </button>
+            <button class="interval-button" style="margin: 0; padding: 2px 5px; font-size: 12px; gap: 5px;" onclick="changeInterval(this, 'last_2_hours')">
+                Last 2h
+            </button>
+            <button class="interval-button" style="margin: 0; padding: 2px 5px; font-size: 12px; gap: 5px;" onclick="changeInterval(this, 'last_30_min')">
+                Last 30min
+            </button>
+            <button class="interval-button" style="margin: 0; padding: 2px 5px; font-size: 12px; gap: 5px; background-color: #4e4ad9;" onclick="changeInterval(this, 'last_10_min')">
+                Last 10min
+            </button>
+            <span class="mobile-only" style="color: #c7c7c7; font-size: 14px; padding: 0 5px;">
+                <span id="quality-indicator" style="background-color: rgb(253, 226, 47); width: 10px; height: 10px; border-radius: 20px; transition: background-color 0.6s ease;"></span>
+            </span>
+        </span>
+    </span>
+    <img id="graph" src="/image/last_10_min" style="margin: 20px; width: 700px; max-width: 80vw; margin: 0;" />
+        
+    <button id="log-button" onclick="setMarker()">
+        <span id="log-button-icon" class="material-symbols-rounded" style="font-size: 24px;">warning</span>
+        Log Bad Air Quality
+    </button>
+</body>
+</html>
+
+<script>
+    function setMarker() {
+        document.getElementById('log-button-icon').innerText = 'check';
+        document.getElementById('log-button').disabled = true;
+        document.getElementById('log-button').style.cursor = 'not-allowed';
+        document.getElementById('log-button').style.fontSize = '18px';
+        setTimeout(() => {
+            document.getElementById('log-button-icon').innerText = 'bolt';
+            document.getElementById('log-button').disabled = false;
+            document.getElementById('log-button').style.cursor = 'pointer';
+            document.getElementById('log-button').style.fontSize = '16px';
+        }, 1000);
+
+        fetch('/set_marker', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                marker: true
+            })
+        }).then(response => {
+            document.getElementById('graph').src = '/image?' + new Date().getTime();
+        });
+    }
+
+    function changeInterval(button, interval) {
+        document.getElementById('graph').src = '/image/' + interval + '?' + new Date().getTime();
+
+        const buttons = document.getElementsByClassName('interval-button');
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].style.backgroundColor = 'transparent';
+        }
+        
+        button.style.backgroundColor = '#4e4ad9';
+    }
+
+    document.onload = () => {
+        document.getElementById('graph').src = '/image?' + new Date().getTime();
+    }
+
+
+    function updateAirQuality(rgb) {
+        // make indicator blink
+        const intervalId = setInterval(() => {
+            const indicator = document.getElementById('quality-indicator');
+            const quality = document.getElementById('quality');
+            if (indicator.style.backgroundColor === 'rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')') {
+                indicator.style.backgroundColor = 'rgba(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', 0.33)';
+                quality.style.color = 'rgba(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', 0.33)';
+            } else {
+                indicator.style.backgroundColor = 'rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')';
+                quality.style.color = 'rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')';
+            }
+        }, 600);
+
+        fetch('/get_lqi_label')
+            .then(response => response.json())
+            .then(data => {
+                if (data.lqi_class === 1) {
+                    clearInterval(intervalId);
+                    document.getElementById('quality').style.color = "rgb(74, 145, 238)";
+                    document.getElementById('quality').innerText = data.description;
+                    document.getElementById('quality-indicator').style.backgroundColor = "rgb(74, 145, 238)";
+                    rgb = [74, 145, 238];
+                } else if (data.lqi_class === 2) {
+                    clearInterval(intervalId);
+                    document.getElementById('quality').style.color = "rgb(102, 225, 125)";
+                    document.getElementById('quality').innerText = data.description;
+                    document.getElementById('quality-indicator').style.backgroundColor = "rgb(102, 225, 125)";
+                    rgb = [102, 225, 125];
+                } else if (data.lqi_class === 3) {
+                    clearInterval(intervalId);
+                    document.getElementById('quality').style.color = "rgb(253, 226, 47)";
+                    document.getElementById('quality').innerText = data.description;
+                    document.getElementById('quality-indicator').style.backgroundColor = "rgb(253, 226, 47)";
+                    rgb = [253, 226, 47];
+                } else if (data.lqi_class === 4) {
+                    clearInterval(intervalId);
+                    document.getElementById('quality').style.color = "rgb(253, 166, 68)";
+                    document.getElementById('quality').innerText = data.description;
+                    document.getElementById('quality-indicator').style.backgroundColor = "rgb(253, 166, 68)";
+                    rgb = [253, 166, 68];
+                } else if (data.lqi_class === 5) {
+                    clearInterval(intervalId);
+                    document.getElementById('quality').style.color = "rgb(255, 107, 107)";
+                    document.getElementById('quality').innerText = data.description;
+                    document.getElementById('quality-indicator').style.backgroundColor = "rgb(255, 107, 107)";
+                    rgb = [255, 107, 107];
+                } else if (data.lqi_class === 6) {
+                    clearInterval(intervalId);
+                    document.getElementById('quality').style.color = "rgb(157, 27, 27)";
+                    document.getElementById('quality').innerText = data.description;
+                    document.getElementById('quality-indicator').style.backgroundColor = "rgb(157, 27, 27)";
+                    rgb = [157, 27, 27];
+                } else {
+                    clearInterval(intervalId);
+                    document.getElementById('quality').style.color = "rgb(255, 107, 107)";
+                    document.getElementById('quality').innerText = "Unknown";
+                    document.getElementById('quality-indicator').style.backgroundColor = "rgb(255, 107, 107)";
+                    rgb = [255, 107, 107];
+                }
+            })
+            .catch(error => {
+                clearInterval(intervalId);
+                document.getElementById('quality').style.color = "rgb(255, 107, 107)";
+                document.getElementById('quality').innerText = "Unknown";
+                document.getElementById('quality-indicator').style.backgroundColor = "rgb(255, 107, 107)";
+                rgb = [255, 107, 107];
+            });
+        rgb = document.getElementById('quality-indicator').style.backgroundColor;
+        str = rgb.replace('rgb(', '').replace(')', '').split(', ');
+        rgb = [parseInt(str[0]), parseInt(str[1]), parseInt(str[2])];
+        return rgb;
+    }
+    
+
+    document.addEventListener('DOMContentLoaded', () => {
+        var rgb = [253, 226, 47];
+        rgb = updateAirQuality(rgb);
+        setInterval(() => {
+            rgb = updateAirQuality(rgb);
+        }, 4000);
+        
+    });
+</script>

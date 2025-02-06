@@ -1,0 +1,6 @@
+credentials.py
+.venv/
+__pycache__/
+plot.png
+*.db
+.DS_Store

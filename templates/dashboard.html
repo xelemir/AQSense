@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>Dashboard</title>
+    <link rel="icon" href="/logo.png" type="image/png" sizes="16x16">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #22222a;
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            flex-direction: column;
+            height: 100svh;
+        }
+
+        p {
+            color: #c7c7c7;
+            font-family: 'Nunito', sans-serif;
+            padding-right: 20px;
+        }
+
+        button {
+            font-family: 'Nunito', sans-serif;
+            background-color: #4e4ad9;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background-color 0.3s ease;
+
+        }
+
+        button:hover {
+            background-color: #3c39b3;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: start;
+            align-items: flex-start;
+            gap: 20px;
+            width: 864px;
+            max-width: 90vw;
+            margin: 20px;
+            margin-top: 0px;
+            padding-bottom: 20px;
+
+        }
+      
+        .card {
+            width: 100%;
+            background-color: #27272f;
+            border: 1px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            padding: 0px;
+        }
+    
+        .card-body {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px;
+        
+        }
+    
+        .card-title {
+            font-size: 1.5rem;
+            margin: 0 0 10px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            gap: 10px;
+        }
+    
+        .card-text {
+            font-size: 1em;
+            margin: 0 0 15px;
+            color: #c7c7c7;
+        }
+
+        .desktop-only {
+            display: none;
+        }
+
+        @media(min-width: 1000px) {
+            .card {
+                width: 420px;
+            }
+
+            .desktop-only {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" style="text-decoration: none; position: absolute; top: 20px; left: 20px; color: #c7c7c7; display: flex; align-items: center; gap: 5px;">
+        <span class="material-symbols-rounded">arrow_back_ios_new</span>
+        <span class="desktop-only">Back</span>
+    </a>
+    <h1 style="color: #fff; text-align: center; margin-top: 13px;">Dashboard</h1>
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">
+                    <span class="material-symbols-rounded" style="font-size: 1.4em;">desktop_windows</span>
+                    GUI Service
+                </h3>
+                <p class="card-text">Status of the web-based GUI for the Air Quality Monitoring.</p>
+                <div>
+                    <span style="color: #c7c7c7; font-size: 12px;">Status: </span>
+                    <span style="color:rgb(102, 225, 125); font-size: 12px;">Online</span>
+                </div>
+                <span style="color: #c7c7c7; font-size: 12px;">Last updated: Just now</span>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">
+                    <span class="material-symbols-rounded" style="font-size: 1.4em;">emergency_heat_2</span>
+                    Air Quality Service
+                </h3>
+                <p class="card-text">Status of the Air Quality Monitoring service using the SDS011 sensor.</p>
+                <div>
+                    <span style="color: #c7c7c7; font-size: 12px;">Status: </span>
+                    <span id="status-air-quality-status" style="color:rgb(253, 226, 47); font-size: 12px; transition: color 0.6s ease;">Updating...</span>
+                </div>
+                <span id="status-air-quality-last-updated" style="color: #c7c7c7; font-size: 12px; transition: color 0.6s ease;">Updating...</span>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">
+                    <span class="material-symbols-rounded" style="font-size: 1.4em;">terminal</span>
+                    Control Panel
+                </h3>
+                <p class="card-text">
+                    Control the Air Quality Monitoring service. Start or stop the service.
+                </p>
+                <span style="display: flex; gap: 10px;">
+                    <button id="controlSystem" onclick="">Updating...</button>
+                </span>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">
+                    <span class="material-symbols-rounded" style="font-size: 1.4em;">database</span>
+                    Clear Database
+                </h3>
+                <p class="card-text">
+                    Clear the database to remove all data. Caution: This action is irreversible.
+                </p>
+                <span style="display: flex; gap: 10px;">
+                    <button onclick="clearDB()">Clear Database</button>
+                </span>
+            </div>
+        </div>
+        <div class="card" style="width: 100%;">
+            <div class="card-body">
+                <h3 class="card-title">
+                    <span class="material-symbols-rounded" style="font-size: 1.4em;">memory</span>
+                    System Monitor
+                </h3>
+                <div>
+                    <span style="color: #c7c7c7; font-size: 12px;">Hostname: </span>
+                    <span id="hostname" style="color: #c7c7c7; font-size: 12px;">Unkown</span>
+                </div>
+                <div>
+                    <span style="color: #c7c7c7; font-size: 12px;">CPU: </span>
+                    <span id="cpu-util" style="color: #c7c7c7; font-size: 12px;">0.0 %</span>
+                </div>
+                <div>
+                    <span style="color: #c7c7c7; font-size: 12px;">RAM: </span>
+                    <span id="ram-util" style="color: #c7c7c7; font-size: 12px;">0.0 GB of 0.0 GB used</span>
+                </div>
+                <div>
+                    <span style="color: #c7c7c7; font-size: 12px;">Disk: </span>
+                    <span id="disk-util" style="color: #c7c7c7; font-size: 12px;">0.0 GB of 0.0 GB used</span>
+                </div>
+                <div>
+                    <span style="color: #c7c7c7; font-size: 12px;">Database: </span>
+                    <span id="db-size" style="color: #c7c7c7; font-size: 12px;">0 MB</span>
+                </div>
+                <span id="system-load-last-updated" style="color: #c7c7c7; font-size: 12px;">Last updated: Updating...</span>
+            </div>
+        </div>
+        
+    </div>
+
+</body>
+</html>
+
+<script>
+    // on DOM load
+    document.addEventListener('DOMContentLoaded', () => {
+        const intervalId = setInterval(() => {
+            const status = document.getElementById('status-air-quality-status');
+            const status_last_updated = document.getElementById('status-air-quality-last-updated');
+            if (status.style.color === 'rgb(253, 226, 47)') {
+                status.style.color = 'rgba(253, 226, 47, 0.33)';
+                status_last_updated.style.color = 'rgba(199, 199, 199, 0.33)';
+            } else {
+                status.style.color = 'rgb(253, 226, 47)';
+                status_last_updated.style.color = '#c7c7c7';
+            }
+        }, 600);
+
+
+        fetch('/get_service_status')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'Running') {
+                    clearInterval(intervalId);
+                    document.getElementById('status-air-quality-status').style.color = "rgb(102, 225, 125)";
+                    document.getElementById('status-air-quality-status').innerText = "Active";
+                    document.getElementById('controlSystem').innerText = "Stop Service";
+                    document.getElementById('controlSystem').onclick = () => controlSystem("stop");
+                } else if (data.status === 'Stopped') {
+                    clearInterval(intervalId);
+                    document.getElementById('status-air-quality-status').style.color = "rgb(255, 107, 107)";
+                    document.getElementById('status-air-quality-status').innerText = "Disabled";
+                    document.getElementById('controlSystem').innerText = "Start Service";
+                    document.getElementById('controlSystem').onclick = () => controlSystem("start");
+                } else {
+                    clearInterval(intervalId);
+                    document.getElementById('status-air-quality-status').style.color = "rgb(255, 107, 107)";
+                    document.getElementById('status-air-quality-status').innerText = "Unknown";
+                    document.getElementById('controlSystem').innerText = "Unavailable";
+                    document.getElementById('controlSystem').disabled = true;
+                    document.getElementById('controlSystem').style.cursor = 'not-allowed';
+                    document.getElementById('controlSystem').onclick = null;
+                }
+                document.getElementById('status-air-quality-last-updated').innerText = `Last updated: ${new Date().toLocaleString('de-DE')}`;
+            })
+            .catch(error => {
+                clearInterval(intervalId);
+                document.getElementById('status-air-quality-status').innerText = "Error";
+                document.getElementById('status-air-quality-status').style.color = "rgb(255, 107, 107)";
+                document.getElementById('status-air-quality-last-updated').innerText = `Last updated: ${new Date().toLocaleString('de-DE')}`;
+                document.getElementById('controlSystem').innerText = "Unknown";
+                document.getElementById('controlSystem').disabled = true;
+                document.getElementById('controlSystem').style.cursor = 'not-allowed';
+                document.getElementById('controlSystem').onclick = null;
+            });
+
+        updateSystemLoad();
+        setInterval(() => {
+            updateSystemLoad();
+            }, 2000);
+    });
+
+    function updateSystemLoad() {
+        fetch('/get_system_load')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('hostname').innerText = data.hostname;
+                document.getElementById('cpu-util').innerText = `${data.cpu} %`;
+                document.getElementById('ram-util').innerText = `${data.ram.used} GB of ${data.ram.total} GB used`;
+                document.getElementById('disk-util').innerText = `${data.disk.used} GB of ${data.disk.total} GB used`;
+                document.getElementById('db-size').innerText = `${data.db_size} MB`;
+                document.getElementById('system-load-last-updated').innerText = `Last updated: ${new Date().toLocaleString('de-DE')}`;
+            })
+            .catch(error => {
+                document.getElementById('hostname').innerText = `Error`;
+                document.getElementById('cpu-util').innerText = `Error`;
+                document.getElementById('ram-util').innerText = `Error`;
+                document.getElementById('disk-util').innerText = `Error`;
+                document.getElementById('db-size').innerText = `Error`;
+                document.getElementById('system-load-last-updated').innerText = `Last updated: ${new Date().toLocaleString('de-DE')}`;
+            });
+    }
+
+    function controlSystem(action) {
+        var url = '/stop_service';
+        if (action === 'start') {
+            url = '/start_service';
+        }
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                action: action
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'Running') {
+                    document.getElementById('status-air-quality-status').style.color = "rgb(102, 225, 125)";
+                    document.getElementById('status-air-quality-status').innerText = "Active";
+                    document.getElementById('controlSystem').innerText = "Stop Service";
+                    document.getElementById('controlSystem').onclick = () => controlSystem("stop");
+                } else if (data.status === 'Stopped') {
+                    document.getElementById('status-air-quality-status').style.color = "rgb(255, 107, 107)";
+                    document.getElementById('status-air-quality-status').innerText = "Disabled";
+                    document.getElementById('controlSystem').innerText = "Start Service";
+                    document.getElementById('controlSystem').onclick = () => controlSystem("start");
+                } else {
+                    document.getElementById('status-air-quality-status').style.color = "rgb(255, 107, 107)";
+                    document.getElementById('status-air-quality-status').innerText = "Unknown";
+                    document.getElementById('controlSystem').innerText = "Unavailable";
+                    document.getElementById('controlSystem').disabled = true;
+                    document.getElementById('controlSystem').style.cursor = 'not-allowed';
+                    document.getElementById('controlSystem').onclick = null;
+                }
+                document.getElementById('status-air-quality-last-updated').innerText = `Last updated: ${new Date().toLocaleString('de-DE')}`;
+            })
+            .catch(error => {
+                document.getElementById('status-air-quality-status').innerText = "Error";
+                document.getElementById('status-air-quality-status').style.color = "rgb(255, 107, 107)";
+                document.getElementById('status-air-quality-last-updated').innerText = `Last updated: ${new Date().toLocaleString('de-DE')}`;
+                document.getElementById('controlSystem').innerText = "Unknown";
+                document.getElementById('controlSystem').disabled = true;
+                document.getElementById('controlSystem').style.cursor = 'not-allowed';
+                document.getElementById('controlSystem').onclick = null;
+            });
+    }
+
+    function clearDB() {
+        var result = confirm('Are you sure you want to clear the database? This action is irreversible.');
+        if (!result) {
+            return;
+        }
+
+        fetch('/clear_db', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                action: 'clear'
+            })
+        });
+    }
+</script>
