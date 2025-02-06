@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-    <title>Home</title>
+    <title>AQSense</title>
     <link rel="icon" href="/logo.png" type="image/png" sizes="16x16">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -86,7 +86,7 @@
         <span>Dashboard</span>
     </a>
     <h1 style="color: #fff; text-align: center; margin-bottom: -5px;">Air Quality Monitoring</h1>
-    <p style="color: #c7c7c7; text-align: center; font-size: 12px; margin-bottom: 30px; max-width: 70vw;">Monitor Air Quality in Real-Time and compare to subjective data</p>
+    <p style="color: #c7c7c7; text-align: center; font-size: 12px; margin-bottom: 30px; max-width: 70vw;">AQSense helps you monitor the air quality in your area in real-time.</p>
     <span style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; width: 700px; max-width: 80vw; gap: 0px;">
         <span style="padding: 10px; display: flex; align-items: center; padding: 0;">
             <span class="desktop-only" style="color: #c7c7c7; font-size: 14px; margin-right: 10px; align-items: center; gap: 5px;">
@@ -152,7 +152,7 @@
     }
 
     function changeInterval(button, interval) {
-        document.getElementById('graph').src = '/image/' + interval + '?' + new Date().getTime();
+        document.getElementById('graph').src = '/image/last_10_min' + interval + '?' + new Date().getTime();
 
         const buttons = document.getElementsByClassName('interval-button');
         for (let i = 0; i < buttons.length; i++) {
