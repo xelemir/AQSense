@@ -101,7 +101,8 @@ def visualize_data(range_="last_2_hours"):
     ax.scatter(times_binned, data_binned_max, color='#4e4ad9')
 
     # Plot the verified data
-    ax.scatter(verified_binned, verified_y_values, color='red')
+    #ax.scatter(verified_binned, verified_y_values, color='red')
+    ax.bar(verified_binned, width=0.0005, color='red')
 
     # Format the x-axis as dates/times
     if range_ == "total":
