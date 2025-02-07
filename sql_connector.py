@@ -227,7 +227,7 @@ class SqlConnector:
             _type_: _description_
         """
         self.create_table('particles')
-        self.cursor.execute('''SELECT AVG(two_point_five), AVG(ten) FROM particles WHERE time >= datetime('now', '-{} minutes') ORDER BY time DESC LIMIT {}'''.format(sample_size + offset, sample_size))
+        self.cursor.execute(''' SELECT AVG(two_point_five), AVG(ten) FROM particles WHERE time >= datetime('now', '-? minutes') AND time < datetime('now', '-? minutes') ORDER BY time DESC ''', (sample_size + offset, offset))
         return self.cursor.fetchone()
     
     def delete_markers(self):
