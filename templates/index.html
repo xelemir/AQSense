@@ -128,9 +128,6 @@
             <button class="interval-button" style="margin: 0; padding: 2px 5px; font-size: 12px; gap: 5px;" onclick="changeInterval(this, 'last_30_min')">
                 30m
             </button>
-            <button class="interval-button" style="margin: 0; padding: 2px 5px; font-size: 12px; gap: 5px; background-color: #4e4ad9;" onclick="changeInterval(this, 'last_10_min')">
-                10m
-            </button>
             <button class="interval-button" style="margin: 0; padding: 2px 0px; font-size: 12px; gap: 5px; width: 25px;" onclick="changeOffset(this, -1)">
                 <span class="material-symbols-rounded" style="font-size: 1.1em;">arrow_forward_ios</span>
             </button>
@@ -139,7 +136,7 @@
             </span>
         </span>
     </span>
-    <img id="graph" src="/image/last_10_min" style="margin: 20px; width: 700px; max-width: 80vw; margin: 0;" />
+    <img id="graph" src="/image/last_30_min" style="margin: 20px; width: 700px; max-width: 80vw; margin: 0;" />
     
     <input type="datetime-local" id="dateInput" style="display: none;" class="invisible-date" />
     <button id="log-button" onclick="setMarker()">
@@ -198,7 +195,7 @@
                 date: document.getElementById('dateInput').value
             })
         }).then(response => {
-            document.getElementById('graph').src = '/image/last_10_min?' + new Date().getTime();
+            document.getElementById('graph').src = '/image/last_30_min?' + new Date().getTime();
         });
     }
 
@@ -227,9 +224,7 @@
         
         global_offset += offset;
 
-        if (interval === '10m') {
-            document.getElementById('graph').src = '/image/last_10_min?offset=' + global_offset + '&t=' + new Date().getTime();
-        } else if (interval === '30m') {
+        if (interval === '30m') {
             document.getElementById('graph').src = '/image/last_30_min?offset=' + global_offset + '&t=' + new Date().getTime();
         } else if (interval === '2h') {
             document.getElementById('graph').src = '/image/last_2_hours?offset=' + global_offset + '&t=' + new Date().getTime();
