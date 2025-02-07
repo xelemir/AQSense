@@ -33,7 +33,7 @@ if __name__ == "__main__":
                         try:
                             send(
                                 title="Pollution Spike Detected!",
-                                message=f"The PM2.5 level has just spiked to {pm25} µg/m³. AVG: {avg_pm25} µg/m³. Difference: {pm25 - avg_pm25} µg/m³.",
+                                message=f"The PM2.5 level has just spiked to {pm25} µg/m³. AVG: {round(avg_pm25, 1)} µg/m³. Difference: {round(pm25 - avg_pm25, 1)} µg/m³.",
                                 endpoint=endpoint,
                                 p256dh=p256dh,
                                 auth=auth,
