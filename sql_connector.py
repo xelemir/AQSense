@@ -12,9 +12,16 @@ class SqlConnector:
             self.cursor.execute('''CREATE TABLE IF NOT EXISTS markers (id INTEGER PRIMARY KEY AUTOINCREMENT, time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)''')
         elif table_name == "particles":
             self.cursor.execute('''CREATE TABLE IF NOT EXISTS particles (id INTEGER PRIMARY KEY AUTOINCREMENT, time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, two_point_five FLOAT NOT NULL, ten FLOAT NOT NULL)''')
+        elif table_name == "webpush_subscriptions":
+            self.cursor.execute('''CREATE TABLE IF NOT EXISTS webpush_subscriptions (id INTEGER PRIMARY KEY AUTOINCREMENT, endpoint TEXT NOT NULL, p256dh TEXT NOT NULL, auth TEXT NOT NULL)''')
         
-    def insert_marker(self, date):
+    def insert_marker(self, date=None):
         self.create_table('markers')
+        
+        if date is None:
+            self.cursor.execute('''INSERT INTO markers DEFAULT VALUES''')
+            self.conn.commit()
+            return
         
         date = datetime.strptime(date, "%Y-%m-%dT%H:%M")
         germany_tz = pytz.timezone("Europe/Berlin")
@@ -201,6 +208,16 @@ class SqlConnector:
         self.cursor.execute('''SELECT * FROM particles ORDER BY time DESC LIMIT 1''')
         return self.cursor.fetchone()
     
+    def get_last_marker_within(self, minutes):
+        self.create_table('markers')
+        self.cursor.execute('''SELECT * FROM markers WHERE time >= datetime('now', '-{} minutes') ORDER BY time DESC LIMIT 1'''.format(minutes))
+        return self.cursor.fetchone()
+    
+    def get_avg_last_two_particles(self):
+        self.create_table('particles')
+        self.cursor.execute('''SELECT AVG(two_point_five), AVG(ten) FROM particles ORDER BY time DESC LIMIT 2''')
+        return self.cursor.fetchone()
+    
     def delete_markers(self):
         self.cursor.execute('''DELETE FROM markers''')
         self.conn.commit()
@@ -214,4 +231,4 @@ class SqlConnector:
         
 if __name__ == "__main__":
     db = SqlConnector("database.db")
-    db.create_table('markers')
+    print(db.get_last_marker_within(3))

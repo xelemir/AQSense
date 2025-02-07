@@ -4,3 +4,4 @@ __pycache__/
 plot.png
 *.db
 .DS_Store
+push_secrets.py
