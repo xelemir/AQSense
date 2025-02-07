@@ -203,9 +203,12 @@ class SqlConnector:
         self.cursor.execute(query)
         return self.cursor.fetchall()
     
-    def get_last_particle(self):
+    def get_last_particle(self, minutes=None):
         self.create_table('particles')
-        self.cursor.execute('''SELECT * FROM particles ORDER BY time DESC LIMIT 1''')
+        if minutes is not None:
+            self.cursor.execute('''SELECT * FROM particles WHERE time >= datetime('now', '-{} minutes') ORDER BY time DESC LIMIT 1'''.format(minutes))
+        else:      
+            self.cursor.execute('''SELECT * FROM particles ORDER BY time DESC LIMIT 1''')
         return self.cursor.fetchone()
     
     def get_last_marker_within(self, minutes):
