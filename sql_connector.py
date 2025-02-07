@@ -243,4 +243,4 @@ class SqlConnector:
         
 if __name__ == "__main__":
     db = SqlConnector("database.db")
-    print(db.get_avg_last_particles(30, 5))
+    print(db.get_avg_last_particles(3, 3))

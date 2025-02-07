@@ -24,7 +24,7 @@ if __name__ == "__main__":
             pm25, pm10 = result
             
             avg_last = sql.get_avg_last_particles(4, 3)
-            if avg_last is not None:
+            if avg_last[0] is not None:
                 avg_pm25 = avg_last[0]
                 if pm25 - avg_pm25 > 3.5 and sql.get_last_marker_within(4) is None and sql.get_last_particle(5) is not None:
 
