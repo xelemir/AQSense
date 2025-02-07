@@ -456,10 +456,11 @@
 
     // ✅ Function to subscribe the user to push notifications
     async function subscribeToPush() {
+        document.getElementById("push-button").innerText = "1";
         if (!window.matchMedia('(display-mode: standalone)').matches) return;
-
+        document.getElementById("push-button").innerText = "2";
         if (!('serviceWorker' in navigator)) return;
-
+        document.getElementById("push-button").innerText = "3";
         try {
             // Ensure the service worker is registered
             let registration = await navigator.serviceWorker.getRegistration();
@@ -467,6 +468,7 @@
                 console.log("No existing service worker found. Registering now...");
                 registration = await registerServiceWorker();
             }
+            document.getElementById("push-button").innerText = "4";
 
             if (!registration) {
                 console.log("❌ Service Worker registration failed.");
