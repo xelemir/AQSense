@@ -90,7 +90,7 @@ def visualize_data(range_="last_2_hours", offset=0):
         verified_binned.append(dt_bin)
 
     # Verified points at the maximum value of the data for that bin
-    y = max(data_binned_max + data_binned)
+    y = max(data_binned)
     verified_y_values = [y] * len(verified_binned)
 
     # --------------------------------------------------------
