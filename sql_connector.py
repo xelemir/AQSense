@@ -238,20 +238,6 @@ class SqlConnector:
         self.cursor.execute('''DELETE FROM particles''')
         self.conn.commit()
         
-    def insert_push_subscription(self, subscription):
-        self.create_table('push_subscriptions')
-        self.cursor.execute('''INSERT INTO push_subscriptions (endpoint, p256dh, auth) VALUES (?, ?, ?)''', (subscription["endpoint"], subscription["p256dh"], subscription["auth"]))
-        self.conn.commit()
-        
-    def delete_push_subscription(self, endpoint):
-        self.cursor.execute('''DELETE FROM push_subscriptions WHERE endpoint=?''', (endpoint,))
-        self.conn.commit()
-        
-    def get_subscriptions(self):
-        self.create_table('push_subscriptions')
-        self.cursor.execute('''SELECT endpoint, p256dh, auth FROM push_subscriptions''')
-        return self.cursor.fetchall()
-        
     def __del__(self):
         self.conn.close()
         
