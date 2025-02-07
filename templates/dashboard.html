@@ -375,18 +375,27 @@
 
 
     function togglePush() {
-        if (!window.matchMedia('(display-mode: standalone)').matches) {
-            return;
-        }
+        try {
+            if (!('serviceWorker' in navigator)) {
+                console.log("Service Workers are not supported in this browser.");
+                return;
+            }
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                return;
+            }
 
-        if (subscription_status) {
-            unsubscribeFromPush();
-            document.getElementById("push-button").innerText = "Activate Push Notifications";
-            subscription_status = false;
-        } else {
-            subscribeToPush();
-            document.getElementById("push-button").innerText = "Deactivate Push Notifications";
-            subscription_status = true;
+            if (subscription_status) {
+                unsubscribeFromPush();
+                document.getElementById("push-button").innerText = "Activate Push Notifications";
+                subscription_status = false;
+            } else {
+                subscribeToPush();
+                document.getElementById("push-button").innerText = "Deactivate Push Notifications";
+                subscription_status = true;
+            }
+        } catch (error) {
+            console.error("❌ Error toggling push notifications:", error);
+            document.getElementById("push-button").innerText = error;
         }
     }
 
