@@ -23,6 +23,10 @@ def dashboard():
 def logo():
     return send_file("data/logo.png", mimetype='image/png')
 
+@app.route('/site.webmanifest')
+def manifest():
+    return send_file("data/site.webmanifest")
+
 @app.route('/image/<range_>')
 def image(range_):
     offset = int(request.args.get('offset', 0))
