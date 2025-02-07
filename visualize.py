@@ -68,13 +68,16 @@ def visualize_data(range_="last_2_hours", offset=0):
     times_binned = []
     data_binned = []
     data_binned_max = []
+    data_binned_min = []
     for key_dt in sorted(grouped.keys()):
         values = grouped[key_dt]
         avg_val = sum(values) / len(values)
         max_val = max(values)
+        min_val = min(values)
         times_binned.append(key_dt)
         data_binned.append(avg_val)
         data_binned_max.append(max_val)
+        data_binned_min.append(min_val)
 
     # --------------------------------------------------------
     # 2) Handle verified data the same way
@@ -105,6 +108,9 @@ def visualize_data(range_="last_2_hours", offset=0):
     
     # Plot the max data
     ax.scatter(times_binned, data_binned_max, color='#4e4ad9')
+    
+    # Plot the min data
+    ax.scatter(times_binned, data_binned_min, color='#4e4ad9')
 
     # Plot the verified data
     ax.scatter(verified_binned, verified_y_values, color='red', zorder=10)
