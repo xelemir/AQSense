@@ -26,14 +26,14 @@ if __name__ == "__main__":
             avg_last = sql.get_avg_last_particles(8, 3)
             if avg_last is not None:
                 avg_pm25 = avg_last[0]
-                if pm25 - avg_pm25 > 3.4 and sql.get_last_marker_within(3) is None and sql.get_last_particle(5) is not None:
+                if pm25 - avg_pm25 > 3.4 and sql.get_last_marker_within(4) is None and sql.get_last_particle(5) is not None:
 
                     # Pollution spike detected, log and send notification if possible
                     if endpoint is not None:
                         try:
                             send(
                                 title="Pollution Spike Detected!",
-                                message=f"The PM2.5 level has just spiked to {pm25} µg/m³.",
+                                message=f"The PM2.5 level has just spiked to {pm25} µg/m³. AVG: {avg_pm25} µg/m³. Difference: {pm25 - avg_pm25} µg/m³.",
                                 endpoint=endpoint,
                                 p256dh=p256dh,
                                 auth=auth,
