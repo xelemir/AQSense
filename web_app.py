@@ -8,6 +8,11 @@ from sql_connector import SqlConnector
 import subprocess
 import psutil
 import time
+try:
+    from push_secrets import vapid_public, email
+except ImportError:
+    vapid_public = None
+    email = None
 
 app = Flask(__name__)
 
@@ -17,7 +22,7 @@ def index():
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', vapid_public=vapid_public)
 
 @app.route('/logo.png')
 def logo():
@@ -26,6 +31,10 @@ def logo():
 @app.route('/site.webmanifest')
 def manifest():
     return send_file("data/site.webmanifest")
+
+@app.route('/sw.js')
+def sw():
+    return send_file("data/sw.js")
 
 @app.route('/image/<range_>')
 def image(range_):
@@ -196,6 +205,20 @@ def clear_db():
     sql.delete_markers()
     sql.delete_particles()
     return jsonify({"status": "success"})
+
+@app.route("/subscribe", methods=["POST"])
+def subscribe():
+    subscription_info = request.json["subscription"]
+    sql = SqlConnector("database.db")
+    sql.insert_push_subscription(subscription_info)
+    return jsonify({"message": "Subscribed successfully!"})
+
+@app.route("/unsubscribe", methods=["POST"])
+def unsubscribe():
+    endpoint = request.json["endpoint"]
+    sql = SqlConnector("database.db")
+    sql.delete_push_subscription(endpoint)
+    return jsonify({"message": "Unsubscribed successfully!"})
 
 if __name__ == '__main__':
     # Bind to 0.0.0.0 so the app is accessible on your local networkt

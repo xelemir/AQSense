@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>Dashboard</title>
-    <link rel="icon" href="/logo.png" type="image/png" sizes="16x16">
+    <link rel="icon" href="https://gruettecloud.com/static/AQSense.png" type="image/png" sizes="16x16">
     <link rel="manifest" href="/site.webmanifest">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -179,7 +179,21 @@
                 </span>
             </div>
         </div>
-        <div class="card" style="width: 100%;">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">
+                    <span class="material-symbols-rounded" style="font-size: 1.4em;">notifications_active</span>
+                    Push Notifications
+                </h3>
+                <p class="card-text">
+                    Receive a push notification when a sudden spike in air pollution is detected. Only available if this page is installed as a PWA.
+                </p>
+                <span style="display: flex; gap: 10px;">
+                    <button id="push-button" style="display: none;" onclick="togglePush()">Activate Push Notifications</button>
+                </span>
+            </div>
+        </div>
+        <div class="card">
             <div class="card-body">
                 <h3 class="card-title">
                     <span class="material-symbols-rounded" style="font-size: 1.4em;">memory</span>
@@ -208,7 +222,6 @@
                 <span id="system-load-last-updated" style="color: #c7c7c7; font-size: 12px;">Last updated: Updating...</span>
             </div>
         </div>
-        
     </div>
 
 </body>
@@ -358,4 +371,207 @@
             })
         });
     }
+
+
+
+    function togglePush() {
+        if (!window.matchMedia('(display-mode: standalone)').matches) {
+            return;
+        }
+
+        if (subscription_status) {
+            unsubscribeFromPush();
+            document.getElementById("push-button").innerText = "Activate Push Notifications";
+            subscription_status = false;
+        } else {
+            subscribeToPush();
+            document.getElementById("push-button").innerText = "Deactivate Push Notifications";
+            subscription_status = true;
+        }
+    }
+
+    // ✅ Function to register the service worker
+    async function registerServiceWorker() {
+        if (!('serviceWorker' in navigator)) {
+            console.log("Service Workers are not supported in this browser.");
+            return null;
+        }
+
+        try {
+            const registration = await navigator.serviceWorker.register('/sw.js');
+            console.log("✅ Service Worker registered with scope:", registration.scope);
+            return registration;
+        } catch (error) {
+            console.error("❌ Service Worker registration failed:", error);
+            return null;
+        }
+    }
+
+    // ✅ Function to check subscription status
+    async function checkSubscriptionStatus() {
+        if (!('serviceWorker' in navigator)) {
+            console.log("Service Workers are not supported in this browser.");
+            return false;
+        }
+
+        try {
+            console.log("Ensuring service worker is registered...");
+            
+            // Ensure service worker is registered
+            let registration = await navigator.serviceWorker.getRegistration();
+            if (!registration) {
+                console.log("No existing service worker found. Registering now...");
+                registration = await registerServiceWorker();
+            }
+
+            if (!registration) {
+                console.log("Service Worker registration failed.");
+                return false;
+            }
+
+            console.log("✅ Service worker is registered:", registration);
+
+            // Ensure pushManager is available
+            if (!registration.pushManager) {
+                console.log("❌ PushManager is not supported.");
+                return false;
+            }
+
+            // Get the current push subscription
+            const subscription = await registration.pushManager.getSubscription();
+            console.log("Checking subscription status...");
+
+            if (subscription) {
+                console.log("✅ Subscription is active:", subscription);
+                return subscription; // Return the actual subscription object
+            } else {
+                console.log("❌ No active subscription found.");
+                return false; // No subscription
+            }
+        } catch (error) {
+            console.error("❌ Error checking subscription status:", error);
+            return false;
+        }
+    }
+
+    // ✅ Function to subscribe the user to push notifications
+    async function subscribeToPush() {
+        if (!window.matchMedia('(display-mode: standalone)').matches) return;
+
+        if (!('serviceWorker' in navigator)) return;
+
+        try {
+            // Ensure the service worker is registered
+            let registration = await navigator.serviceWorker.getRegistration();
+            if (!registration) {
+                console.log("No existing service worker found. Registering now...");
+                registration = await registerServiceWorker();
+            }
+
+            if (!registration) {
+                console.log("❌ Service Worker registration failed.");
+                return;
+            }
+
+            console.log("✅ Service worker is ready:", registration);
+
+            // Request notification permission
+            const permission = await Notification.requestPermission();
+            if (permission !== "granted") {
+                console.log("❌ User denied notification permission.");
+                return;
+            }
+
+            // Convert VAPID public key to Uint8Array
+            const applicationServerKey = urlBase64ToUint8Array("{{ vapid_public }}");
+
+            // Subscribe to push notifications
+            const subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey
+            });
+
+            console.log("✅ Subscribed to push:", subscription);
+
+            // Send subscription info to the backend
+            await fetch("/subscribe", {
+                method: "POST",
+                body: JSON.stringify({ subscription }),
+                headers: { "Content-Type": "application/json" }
+            });
+
+        } catch (error) {
+            console.error("❌ Error subscribing to push notifications:", error);
+        }
+    }
+
+    // ✅ Function to unsubscribe from push notifications
+    async function unsubscribeFromPush() {
+        if (!('serviceWorker' in navigator)) return;
+
+        try {
+            console.log("Unsubscribing from push notifications...");
+
+            // Get service worker registration
+            const registration = await navigator.serviceWorker.ready;
+
+            // Get current subscription
+            const subscription = await registration.pushManager.getSubscription();
+            if (!subscription) {
+                console.log("❌ No active subscription found.");
+                return;
+            }
+
+            // Unsubscribe
+            const success = await subscription.unsubscribe();
+            if (success) {
+                console.log("✅ Successfully unsubscribed from push notifications.");
+
+                // Notify backend to remove the subscription
+                await fetch("/unsubscribe", {
+                    method: "POST",
+                    body: JSON.stringify({ endpoint: subscription.endpoint }),
+                    headers: { "Content-Type": "application/json" }
+                });
+
+                console.log("✅ Unsubscription info sent to backend.");
+            } else {
+                console.log("❌ Failed to unsubscribe.");
+            }
+        } catch (error) {
+            console.error("❌ Error unsubscribing from push:", error);
+        }
+    }
+
+    // ✅ Helper function to convert VAPID key
+    function urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+        const rawData = window.atob(base64);
+        return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
+    }
+
+    var subscription_status = false;
+
+    // ✅ Check subscription status on page load
+    document.addEventListener("DOMContentLoaded", async () => {
+        const subscription = await checkSubscriptionStatus();
+        if (subscription) {
+            console.log("🎉 User is already subscribed!");
+            subscription_status = true;
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                document.getElementById("push-button").innerText = "Deactivate Push Notifications";
+                document.getElementById("push-button").style.display = "block";
+            }
+
+        } else {
+            console.log("🚀 User is not subscribed, prompting to subscribe...");
+            subscription_status = false;
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                document.getElementById("push-button").innerText = "Activate Push Notifications";
+                document.getElementById("push-button").style.display = "block";
+            }
+
+        }
+    });
 </script>

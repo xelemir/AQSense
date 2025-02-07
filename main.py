@@ -4,9 +4,9 @@ from push_notification import send
 import time
 
 try:
-    from push_secrets import *
+    from push_secrets import email, vapid_private
 except ImportError:
-    endpoint, p256dh, auth, vapid_private, email = None, None, None, None, None
+    email, vapid_private = None, None
     print("Starting without push notification support.")
 
 if __name__ == "__main__":
@@ -29,19 +29,21 @@ if __name__ == "__main__":
                 if pm25 - avg_pm25 > 3.5 and sql.get_last_marker_within(4) is None and sql.get_last_particle(5) is not None:
 
                     # Pollution spike detected, log and send notification if possible
-                    if endpoint is not None:
-                        try:
-                            send(
-                                title="Pollution Spike Detected!",
-                                message=f"The PM2.5 level has just spiked to {pm25} µg/m³. AVG: {round(avg_pm25, 1)} µg/m³. Difference: {round(pm25 - avg_pm25, 1)} µg/m³.",
-                                endpoint=endpoint,
-                                p256dh=p256dh,
-                                auth=auth,
-                                vapid_private=vapid_private,
-                                email=email,
-                            )
-                        except Exception as e:
-                            print(f"Failed to send push notification: {e}")
+                    if vapid_private is not None:
+                        subscriptions = sql.get_subscriptions()
+                        for subscription in subscriptions:
+                            try:
+                                send(
+                                    title="Pollution Spike Detected!",
+                                    message=f"The PM2.5 level has just spiked to {pm25} µg/m³. AVG: {round(avg_pm25, 1)} µg/m³. Difference: {round(pm25 - avg_pm25, 1)} µg/m³.",
+                                    endpoint=subscription[0],
+                                    p256dh=subscription[1],
+                                    auth=subscription[2],
+                                    vapid_private=vapid_private,
+                                    email=email,
+                                )
+                            except Exception as e:
+                                print(f"Failed to send push notification: {e}")
                     
                     sql.insert_marker()
                     
