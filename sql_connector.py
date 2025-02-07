@@ -217,8 +217,17 @@ class SqlConnector:
         return self.cursor.fetchone()
     
     def get_avg_last_particles(self, sample_size, offset=0):
+        """ Get the average of the last n particles with optional offset.
+
+        Args:
+            sample_size (_type_): _description_
+            offset (int, optional): _description_. Defaults to 0.
+
+        Returns:
+            _type_: _description_
+        """
         self.create_table('particles')
-        self.cursor.execute('''SELECT AVG(two_point_five), AVG(ten) FROM particles WHERE time < datetime('now', '-{} minutes') ORDER BY time DESC LIMIT {}'''.format(offset, sample_size))
+        self.cursor.execute('''SELECT AVG(two_point_five), AVG(ten) FROM particles WHERE time >= datetime('now', '-{} minutes') ORDER BY time DESC LIMIT {}'''.format(sample_size + offset, sample_size))
         return self.cursor.fetchone()
     
     def delete_markers(self):
