@@ -216,9 +216,9 @@ class SqlConnector:
         self.cursor.execute('''SELECT * FROM markers WHERE time >= datetime('now', '-{} minutes') ORDER BY time DESC LIMIT 1'''.format(minutes))
         return self.cursor.fetchone()
     
-    def get_avg_last_two_particles(self):
+    def get_avg_last_particles(self, sample_size, offset=0):
         self.create_table('particles')
-        self.cursor.execute('''SELECT AVG(two_point_five), AVG(ten) FROM particles ORDER BY time DESC LIMIT 2''')
+        self.cursor.execute('''SELECT AVG(two_point_five), AVG(ten) FROM particles WHERE time < datetime('now', '-{} minutes') ORDER BY time DESC LIMIT {}'''.format(offset, sample_size))
         return self.cursor.fetchone()
     
     def delete_markers(self):
@@ -234,4 +234,4 @@ class SqlConnector:
         
 if __name__ == "__main__":
     db = SqlConnector("database.db")
-    print(db.get_last_marker_within(3))
+    print(db.get_avg_last_particles(30, 5))

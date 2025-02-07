@@ -23,10 +23,10 @@ if __name__ == "__main__":
         if result is not None:
             pm25, pm10 = result
             
-            avg_last = sql.get_avg_last_two_particles()
+            avg_last = sql.get_avg_last_particles(10, 4)
             if avg_last is not None:
                 avg_pm25 = avg_last[0]
-                if pm25 - avg_pm25 > 4 and sql.get_last_marker_within(3) is None and sql.get_last_particle(5) is not None:
+                if pm25 - avg_pm25 > 3 and sql.get_last_marker_within(3) is None and sql.get_last_particle(5) is not None:
 
                     # Pollution spike detected, log and send notification if possible
                     if endpoint is not None:
