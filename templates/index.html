@@ -222,8 +222,11 @@
             }
         }
         
-        global_offset = max(global_offset + offset, 0);
-
+        global_offset += offset;
+        if global_offset < 0 {
+            global_offset = 0;
+        }
+        
 
         if (interval === '30m') {
             document.getElementById('graph').src = '/image/last_30_min?offset=' + global_offset + '&t=' + new Date().getTime();
