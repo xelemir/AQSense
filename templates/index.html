@@ -257,37 +257,37 @@
         fetch('/get_aqi_label')
             .then(response => response.json())
             .then(data => {
-                if (data.category === "Good") {
+                if (data.category == "Good") {
                     clearInterval(intervalId);
                     document.getElementById('quality').style.color = "rgb(102, 225, 125)";
                     document.getElementById('quality').innerText = data.description;
                     document.getElementById('quality-indicator').style.backgroundColor = "rgb(102, 225, 125)";
                     rgb = [102, 225, 125];
-                } else if (data.category === "Moderate") {
+                } else if (data.category == "Moderate") {
                     clearInterval(intervalId);
                     document.getElementById('quality').style.color = "rgb(253, 226, 47)";
                     document.getElementById('quality').innerText = data.description;
                     document.getElementById('quality-indicator').style.backgroundColor = "rgb(253, 226, 47)";
                     rgb = [253, 226, 47];
-                } else if (data.category === "Unhealthy for Sensitive Groups") {
+                } else if (data.category == "Unhealthy for Sensitive Groups") {
                     clearInterval(intervalId);
                     document.getElementById('quality').style.color = "rgb(255, 186, 24)";
                     document.getElementById('quality').innerText = data.description;
                     document.getElementById('quality-indicator').style.backgroundColor = "rgb(255, 186, 24)";
                     rgb = [255, 186, 24];
-                } else if (data.category === "Unhealthy") {
+                } else if (data.category == "Unhealthy") {
                     clearInterval(intervalId);
                     document.getElementById('quality').style.color = "rgb(255, 84, 42)";
                     document.getElementById('quality').innerText = data.description;
                     document.getElementById('quality-indicator').style.backgroundColor = "rgb(255, 84, 42)";
                     rgb = [255, 84, 42];
-                } else if (data.category === "Very Unhealthy") {
+                } else if (data.category == "Very Unhealthy") {
                     clearInterval(intervalId);
                     document.getElementById('quality').style.color = "rgb(155, 16, 255)";
                     document.getElementById('quality').innerText = data.description;
                     document.getElementById('quality-indicator').style.backgroundColor = "rgb(155, 16, 255)";
                     rgb = [155, 16, 255];
-                } else if (data.category === "Hazardous") {
+                } else if (data.category == "Hazardous") {
                     clearInterval(intervalId);
                     document.getElementById('quality').style.color = "rgb(157, 27, 27)";
                     document.getElementById('quality').innerText = data.description;
@@ -302,6 +302,7 @@
                 }
             })
             .catch(error => {
+                console.error('Error:', error);
                 clearInterval(intervalId);
                 document.getElementById('quality').style.color = "rgb(189, 189, 189)";
                 document.getElementById('quality').innerText = "Unknown";
