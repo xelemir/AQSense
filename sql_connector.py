@@ -120,7 +120,12 @@ class SqlConnector:
             query = "SELECT * FROM markers"
         
         self.cursor.execute(query)
-        return self.cursor.fetchall()
+        result = self.cursor.fetchall()
+        
+        # UTC to local time conversion
+        germany_tz = pytz.timezone("Europe/Berlin")
+        result = [(germany_tz.localize(datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S")).astimezone(germany_tz).strftime("%Y-%m-%d %H:%M:%S")) for row in result]
+        return result
     
     def get_particles(self, date=None, offset=0):
         self.create_table('particles')
@@ -201,7 +206,12 @@ class SqlConnector:
             query = "SELECT * FROM particles"
             
         self.cursor.execute(query)
-        return self.cursor.fetchall()
+        result = self.cursor.fetchall()
+        
+        # UTC to local time conversion
+        germany_tz = pytz.timezone("Europe/Berlin")
+        result = [(germany_tz.localize(datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S")).astimezone(germany_tz).strftime("%Y-%m-%d %H:%M:%S"), row[2], row[3]) for row in result]
+        return result
     
     def get_last_particle(self, minutes=None):
         self.create_table('particles')
