@@ -48,21 +48,7 @@ def visualize_data(range_="last_2_hours", offset=0):
 
     sql = SqlConnector("database.db")
     data = sql.get_particles(range_, offset)
-    # convert to local timezone
-    for i in range(len(data)):
-        data[i] = list(data[i])
-        try:
-            data[i][1] = datetime.strptime(data[i][1], "%Y-%m-%d %H:%M:%S%z").astimezone(pytz.timezone('Europe/Berlin')).strftime("%Y-%m-%d %H:%M:%S")
-        except ValueError:
-            data[i][1] = datetime.strptime(data[i][1], "%Y-%m-%d %H:%M:%S").astimezone(pytz.timezone('Europe/Berlin')).strftime("%Y-%m-%d %H:%M:%S")
-    
     verified_data = sql.get_marker_times(range_, offset)
-    for i in range(len(verified_data)):
-        verified_data[i] = list(verified_data[i])
-        try:
-            verified_data[i][1] = datetime.strptime(verified_data[i][1], "%Y-%m-%d %H:%M:%S%z").astimezone(pytz.timezone('Europe/Berlin')).strftime("%Y-%m-%d %H:%M:%S")
-        except ValueError:
-            verified_data[i][1] = datetime.strptime(verified_data[i][1], "%Y-%m-%d %H:%M:%S").astimezone(pytz.timezone('Europe/Berlin')).strftime("%Y-%m-%d %H:%M:%S")
 
     # --------------------------------------------------------
     # 1) Group data by the chosen binning function
