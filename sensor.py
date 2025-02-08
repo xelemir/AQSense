@@ -189,29 +189,38 @@ class SDS011(object):
 
         return f"{year}-{month}-{day}"
     
-def calculate_lqi_pm25(concentration):
+def calculate_aqi_pm25(concentration):
     """
-    Calculate the German Luftqualitätsindex (LQI) for PM2.5.
+    Berechnet den AQI für PM2.5 mittels linearer Interpolation.
     
-    Args:
-        concentration (float): PM2.5 concentration in µg/m³.
+    Parameter:
+        concentration (float): PM2.5-Konzentration in µg/m³.
         
-    Returns:
-        tuple: (LQI class (1-6), descriptive label)
+    Rückgabe:
+        (int, str): Gerundeter AQI-Wert und die zugehörige Kategorie.
     """
-    if concentration <= 15:
-        return 1, "Very Good"
-    elif concentration <= 25:
-        return 2, "Good"
-    elif concentration <= 37:
-        return 3, "Moderate"
-    elif concentration <= 50:
-        return 4, "Sufficient"
-    elif concentration <= 75:
-        return 5, "Poor"
-    else:
-        return 6, "Very Poor"
+    # Definierte Breakpoints gemäß EPA für PM2.5
+    breakpoints = [
+        # (C_lo, C_hi, I_lo, I_hi, Kategorie)
+        (0.0, 12.0, 0, 50, "Good"),
+        (12.1, 35.4, 51, 100, "Moderate"),
+        (35.5, 55.4, 101, 150, "Unhealthy for Sensitive Groups"),
+        (55.5, 150.4, 151, 200, "Unhealthy"),
+        (150.5, 250.4, 201, 300, "Very Unhealthy"),
+        (250.5, 500.4, 301, 500, "Hazardous")
+    ]
+    
+    if concentration < 0:
+        return 0, "Ungültige Konzentration"
 
+    for C_lo, C_hi, I_lo, I_hi, category in breakpoints:
+        if C_lo <= concentration <= C_hi:
+            # Lineare Interpolation
+            aqi = (I_hi - I_lo) / (C_hi - C_lo) * (concentration - C_lo) + I_lo
+            return round(aqi), category
+
+    # Falls die Konzentration über dem höchsten definierten Intervall liegt
+    return 0, "AQI außerhalb des definierten Bereichs"
 
 
 if __name__ == "__main__":

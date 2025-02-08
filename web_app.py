@@ -3,7 +3,7 @@ import os
 from flask import Flask, jsonify, request
 from flask import send_file, render_template
 from visualize import visualize_data
-from sensor import calculate_lqi_pm25
+from sensor import calculate_aqi_from_pm25
 from sql_connector import SqlConnector
 import subprocess
 import psutil
@@ -51,14 +51,14 @@ def set_marker():
     sql.insert_marker(date) 
     return jsonify({"status": "success"})
 
-@app.route('/get_lqi_label', methods=['GET'])
-def get_lqi_label():
+@app.route('/get_aqi_label', methods=['GET'])
+def get_aqi_label():
     sql = SqlConnector("database.db")
     pm25_reading = sql.get_last_particle()
-    if pm25_reading is None: return jsonify({ "lqi_class": 0, "description": "No data" })
+    if pm25_reading is None: return jsonify({ "aqi_class": 0, "description": "No data" })
     pm25_reading = float(pm25_reading[2])
-    lqi_class, description = calculate_lqi_pm25(pm25_reading)
-    return jsonify({ "lqi_class": lqi_class, "description": description })
+    aqi_class, description = calculate_aqi_from_pm25(pm25_reading)
+    return jsonify({ "aqi_class": aqi_class, "description": description })
 
 @app.route('/get_service_status', methods=['GET'])
 def get_service_status():
@@ -205,20 +205,6 @@ def clear_db():
     sql.delete_markers()
     sql.delete_particles()
     return jsonify({"status": "success"})
-
-@app.route("/subscribe", methods=["POST"])
-def subscribe():
-    subscription_info = request.json["subscription"]
-    sql = SqlConnector("database.db")
-    sql.insert_push_subscription(subscription_info)
-    return jsonify({"message": "Subscribed successfully!"})
-
-@app.route("/unsubscribe", methods=["POST"])
-def unsubscribe():
-    endpoint = request.json["endpoint"]
-    sql = SqlConnector("database.db")
-    sql.delete_push_subscription(endpoint)
-    return jsonify({"message": "Unsubscribed successfully!"})
 
 if __name__ == '__main__':
     # Bind to 0.0.0.0 so the app is accessible on your local networkt
