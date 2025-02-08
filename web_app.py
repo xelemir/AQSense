@@ -3,7 +3,7 @@ import os
 from flask import Flask, jsonify, request
 from flask import send_file, render_template
 from visualize import visualize_data
-from sensor import calculate_aqi_from_pm25
+from sensor import calculate_aqi_pm25
 from sql_connector import SqlConnector
 import subprocess
 import psutil
@@ -57,7 +57,7 @@ def get_aqi_label():
     pm25_reading = sql.get_last_particle()
     if pm25_reading is None: return jsonify({ "aqi_class": 0, "description": "No data" })
     pm25_reading = float(pm25_reading[2])
-    aqi_class, description = calculate_aqi_from_pm25(pm25_reading)
+    aqi_class, description = calculate_aqi_pm25(pm25_reading)
     return jsonify({ "aqi_class": aqi_class, "description": description })
 
 @app.route('/get_service_status', methods=['GET'])
