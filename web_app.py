@@ -27,9 +27,9 @@ def logo():
 def manifest():
     return send_file("data/site.webmanifest")
 
-@app.route('/sw.js')
-def sw():
-    return send_file("data/sw.js")
+@app.route('/javascript.js')
+def js():
+    return send_file("data/javascript.js")
 
 @app.route('/image/<range_>')
 def image(range_):

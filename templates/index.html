@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <script src="/javascript.js"></script>
     <style>
         * {
             font-family: 'Montserrat', sans-serif;
@@ -178,15 +179,6 @@
 <script>
     var global_offset = 0;
 
-    /*toggleButtons();
-    document.getElementById('dateInputDummy').value = '2025-02-04 12:00';
-    document.getElementById('dateInput').classList.remove('invisible-date');
-    document.getElementById('cancel-logging').style.display = 'flex';
-    document.getElementById('dateInput').value = document.getElementById('dateInputDummy').value;
-    document.getElementById('time-selection-window').style.display = 'flex';
-    document.getElementById('log-button').style.display = 'none';
-    document.getElementById('cancel-logging').style.display = 'flex';*/
-
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('dateInputDummy').addEventListener('change', () => {
             if (document.getElementById('dateInputDummy').value !== '') {
@@ -203,206 +195,10 @@
         });
     });
 
-    function toggleButtons() {
-        var buttons = document.getElementById('buttons');
-        if (buttons.style.display === 'none') {
-            document.getElementById('toggle-button').innerHTML = 'close';
-            buttons.classList.remove('animate__slideOutRight');
-            buttons.classList.add('animate__slideInRight');
-            buttons.style.display = 'block';
-
-            // if useragent contains ios 
-            if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
-                document.getElementById('log-button').style.display = 'none';
-                document.getElementById('dateInputDummy').classList.remove('invisible-date');
-                document.getElementById('dateInputDummy').value = new Date().toISOString().slice(0, 16);
-            }
-
-        } else {
-            cancelLogging();
-            document.getElementById('toggle-button').innerHTML = 'add';
-            buttons.classList.remove('animate__slideInRight');
-            buttons.classList.add('animate__slideOutRight');
-            setTimeout(function() {
-                buttons.style.display = 'none';
-                buttons.classList.remove('animate__slideOutRight');
-            }, 750);
-            // if useragent contains ios 
-            if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
-                document.getElementById('log-button').style.display = 'none';
-                document.getElementById('dateInputDummy').classList.add('invisible-date');
-            }
-        }
-    }
-
-    function cancelLogging() {
-        document.getElementById('dateInput').value = '';
-        document.getElementById('dateInputDummy').value = '';
-        document.getElementById('time-selection-window').style.display = 'none';
-        document.getElementById('log-button').style.display = 'flex';
-
-        if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
-            document.getElementById('toggle-button').innerHTML = 'add';
-            buttons.classList.remove('animate__slideInRight');
-            buttons.classList.add('animate__slideOutRight');
-            setTimeout(function() {
-                buttons.style.display = 'none';
-                buttons.classList.remove('animate__slideOutRight');
-            }, 750);
-            // if useragent contains ios 
-            if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
-                document.getElementById('log-button').style.display = 'none';
-                document.getElementById('dateInputDummy').classList.add('invisible-date');
-            }
-        }
-    }
-
-    function confirmLogging() {
-        fetch('/set_marker', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                date: document.getElementById('dateInput').value
-            })
-        }).then(response => {
-            document.getElementById('graph').src = '/image/last_30_min?' + new Date().getTime();
-            cancelLogging();
-            document.getElementById('toggle-button').innerHTML = 'add';
-            buttons.classList.remove('animate__slideInRight');
-            buttons.classList.add('animate__slideOutRight');
-            setTimeout(function() {
-                buttons.style.display = 'none';
-                buttons.classList.remove('animate__slideOutRight');
-            }, 750);
-        });
-    }
-
-    function setMarker() {
-        if (document.getElementById('dateInput').value === '') {
-            document.getElementById('dateInputDummy').showPicker();
-            return;
-        }
-    }
-
-    function changeInterval(button, interval) {
-        global_offset = 0;
-        document.getElementById('graph').src = '/image/' + interval + '?' + new Date().getTime();
-
-        const buttons = document.getElementsByClassName('interval-button');
-        for (let i = 0; i < buttons.length; i++) {
-            buttons[i].style.backgroundColor = 'transparent';
-        }
-        
-        button.style.backgroundColor = '#4e4ad9';
-    }
-
-    function changeOffset(button, offset) {
-        var interval_buttons = document.getElementsByClassName('interval-button');
-        var interval = '';
-
-        for (let i = 0; i < interval_buttons.length; i++) {
-            if (interval_buttons[i].style.backgroundColor === 'rgb(78, 74, 217)') {
-                interval = interval_buttons[i].innerText;
-                break;
-            }
-        }
-        
-        global_offset += offset;
-        if (global_offset < 0) {
-            global_offset = 0;
-        }
-        
-
-        if (interval === '30m') {
-            document.getElementById('graph').src = '/image/last_30_min?offset=' + global_offset + '&t=' + new Date().getTime();
-        } else if (interval === '2h') {
-            document.getElementById('graph').src = '/image/last_2_hours?offset=' + global_offset + '&t=' + new Date().getTime();
-        }
-    }
-
     document.onload = () => {
         document.getElementById('graph').src = '/image?' + new Date().getTime();
     }
-
-
-    function updateAirQuality(rgb) {
-        // make indicator blink
-        const intervalId = setInterval(() => {
-            const indicator = document.getElementById('quality-indicator');
-            const quality = document.getElementById('quality');
-            if (indicator.style.backgroundColor === 'rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')') {
-                indicator.style.backgroundColor = 'rgba(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', 0.33)';
-                quality.style.color = 'rgba(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ', 0.33)';
-            } else {
-                indicator.style.backgroundColor = 'rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')';
-                quality.style.color = 'rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')';
-            }
-        }, 600);
-
-        fetch('/get_aqi_label')
-            .then(response => response.json())
-            .then(data => {
-                if (data.description == "Good") {
-                    clearInterval(intervalId);
-                    document.getElementById('quality').style.color = "rgb(102, 225, 125)";
-                    document.getElementById('quality').innerText = data.description;
-                    document.getElementById('quality-indicator').style.backgroundColor = "rgb(102, 225, 125)";
-                    rgb = [102, 225, 125];
-                } else if (data.description == "Moderate") {
-                    clearInterval(intervalId);
-                    document.getElementById('quality').style.color = "rgb(253, 226, 47)";
-                    document.getElementById('quality').innerText = data.description;
-                    document.getElementById('quality-indicator').style.backgroundColor = "rgb(253, 226, 47)";
-                    rgb = [253, 226, 47];
-                } else if (data.description == "Unhealthy for Sensitive Groups") {
-                    clearInterval(intervalId);
-                    document.getElementById('quality').style.color = "rgb(255, 186, 24)";
-                    document.getElementById('quality').innerText = data.description;
-                    document.getElementById('quality-indicator').style.backgroundColor = "rgb(255, 186, 24)";
-                    rgb = [255, 186, 24];
-                } else if (data.description == "Unhealthy") {
-                    clearInterval(intervalId);
-                    document.getElementById('quality').style.color = "rgb(255, 84, 42)";
-                    document.getElementById('quality').innerText = data.description;
-                    document.getElementById('quality-indicator').style.backgroundColor = "rgb(255, 84, 42)";
-                    rgb = [255, 84, 42];
-                } else if (data.description == "Very Unhealthy") {
-                    clearInterval(intervalId);
-                    document.getElementById('quality').style.color = "rgb(155, 16, 255)";
-                    document.getElementById('quality').innerText = data.description;
-                    document.getElementById('quality-indicator').style.backgroundColor = "rgb(155, 16, 255)";
-                    rgb = [155, 16, 255];
-                } else if (data.description == "Hazardous") {
-                    clearInterval(intervalId);
-                    document.getElementById('quality').style.color = "rgb(157, 27, 27)";
-                    document.getElementById('quality').innerText = data.description;
-                    document.getElementById('quality-indicator').style.backgroundColor = "rgb(157, 27, 27)";
-                    rgb = [157, 27, 27];
-                } else {
-                    clearInterval(intervalId);
-                    document.getElementById('quality').style.color = "rgb(189, 189, 189)";
-                    document.getElementById('quality').innerText = "Unknown";
-                    document.getElementById('quality-indicator').style.backgroundColor = "rgb(189, 189, 189)";
-                    rgb = [189, 189, 189];
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                clearInterval(intervalId);
-                document.getElementById('quality').style.color = "rgb(189, 189, 189)";
-                document.getElementById('quality').innerText = "Unknown";
-                document.getElementById('quality-indicator').style.backgroundColor = "rgb(189, 189, 189)";
-                rgb = [189, 189, 189];
-            });
-        rgb = document.getElementById('quality-indicator').style.backgroundColor;
-        str = rgb.replace('rgb(', '').replace(')', '').split(', ');
-        rgb = [parseInt(str[0]), parseInt(str[1]), parseInt(str[2])];
-        return rgb;
-    }
     
-
     document.addEventListener('DOMContentLoaded', () => {
         var rgb = [189, 189, 189];
         rgb = updateAirQuality(rgb);

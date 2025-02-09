@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <script src="/javascript.js"></script>
     <style>
         * {
             font-family: 'Montserrat', sans-serif;
@@ -274,89 +275,5 @@
             }, 2000);
     });
 
-    function updateSystemLoad() {
-        fetch('/get_system_load')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('hostname').innerText = data.hostname;
-                document.getElementById('cpu-util').innerText = `${data.cpu} %`;
-                document.getElementById('ram-util').innerText = `${data.ram.used} GB of ${data.ram.total} GB used`;
-                document.getElementById('disk-util').innerText = `${data.disk.used} GB of ${data.disk.total} GB used`;
-                document.getElementById('db-size').innerText = `${data.db_size} MB`;
-                document.getElementById('system-load-last-updated').innerText = `Last updated: ${new Date().toLocaleString('de-DE')}`;
-            })
-            .catch(error => {
-                document.getElementById('hostname').innerText = `Error`;
-                document.getElementById('cpu-util').innerText = `Error`;
-                document.getElementById('ram-util').innerText = `Error`;
-                document.getElementById('disk-util').innerText = `Error`;
-                document.getElementById('db-size').innerText = `Error`;
-                document.getElementById('system-load-last-updated').innerText = `Last updated: ${new Date().toLocaleString('de-DE')}`;
-            });
-    }
-
-    function controlSystem(action) {
-        var url = '/stop_service';
-        if (action === 'start') {
-            url = '/start_service';
-        }
-
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                action: action
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'Running') {
-                    document.getElementById('status-air-quality-status').style.color = "rgb(102, 225, 125)";
-                    document.getElementById('status-air-quality-status').innerText = "Active";
-                    document.getElementById('controlSystem').innerText = "Stop Service";
-                    document.getElementById('controlSystem').onclick = () => controlSystem("stop");
-                } else if (data.status === 'Stopped') {
-                    document.getElementById('status-air-quality-status').style.color = "rgb(255, 107, 107)";
-                    document.getElementById('status-air-quality-status').innerText = "Disabled";
-                    document.getElementById('controlSystem').innerText = "Start Service";
-                    document.getElementById('controlSystem').onclick = () => controlSystem("start");
-                } else {
-                    document.getElementById('status-air-quality-status').style.color = "rgb(255, 107, 107)";
-                    document.getElementById('status-air-quality-status').innerText = "Unknown";
-                    document.getElementById('controlSystem').innerText = "Unavailable";
-                    document.getElementById('controlSystem').disabled = true;
-                    document.getElementById('controlSystem').style.cursor = 'not-allowed';
-                    document.getElementById('controlSystem').onclick = null;
-                }
-                document.getElementById('status-air-quality-last-updated').innerText = `Last updated: ${new Date().toLocaleString('de-DE')}`;
-            })
-            .catch(error => {
-                document.getElementById('status-air-quality-status').innerText = "Error";
-                document.getElementById('status-air-quality-status').style.color = "rgb(255, 107, 107)";
-                document.getElementById('status-air-quality-last-updated').innerText = `Last updated: ${new Date().toLocaleString('de-DE')}`;
-                document.getElementById('controlSystem').innerText = "Unknown";
-                document.getElementById('controlSystem').disabled = true;
-                document.getElementById('controlSystem').style.cursor = 'not-allowed';
-                document.getElementById('controlSystem').onclick = null;
-            });
-    }
-
-    function clearDB() {
-        var result = confirm('Are you sure you want to clear the database? This action is irreversible.');
-        if (!result) {
-            return;
-        }
-
-        fetch('/clear_db', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                action: 'clear'
-            })
-        });
-    }
+    
 </script>
