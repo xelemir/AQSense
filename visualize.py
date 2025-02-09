@@ -1,4 +1,3 @@
-import sqlite3
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -6,6 +5,7 @@ import matplotlib.dates as mdates
 from datetime import datetime, timedelta
 from sql_connector import SqlConnector
 import pytz
+from config import TIMEZONE
 
 def round_down_to_x_minutes(dt, x):
     """
@@ -61,6 +61,7 @@ def visualize_data(range_="last_2_hours", offset=0):
             dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M:%S")
         except ValueError:
             dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M:%S%z")
+            
         dt_bin = bin_func(dt)         # Round down to the bin
 
         grouped.setdefault(dt_bin, []).append(data_value)
@@ -100,7 +101,7 @@ def visualize_data(range_="last_2_hours", offset=0):
     # --------------------------------------------------------
     # 3) Plot
     # --------------------------------------------------------
-    fig, ax = plt.subplots(figsize=(15, 8))
+    fig, ax = plt.subplots(figsize=(10, 6))
     fig.patch.set_facecolor('#22222a')  # Figure background
     ax.set_facecolor('#22222a')         # Axes background
 
@@ -121,7 +122,7 @@ def visualize_data(range_="last_2_hours", offset=0):
     if range_ == "total":
         date_format = mdates.DateFormatter("%Y-%m-%d")
     else:
-        date_format = mdates.DateFormatter("%H:%M")
+        date_format = mdates.DateFormatter("%H:%M", tz=pytz.timezone(TIMEZONE))
     ax.xaxis.set_major_formatter(date_format)
     fig.autofmt_xdate()  # Automatically rotate date labels
 

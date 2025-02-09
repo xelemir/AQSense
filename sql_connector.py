@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import datetime
 import pytz
+from config import *
 
 class SqlConnector:
     def __init__(self, db_name):
@@ -23,17 +24,12 @@ class SqlConnector:
             self.conn.commit()
             return
         
+        # Convert the date to UTC
         date = datetime.strptime(date, "%Y-%m-%dT%H:%M")
-        germany_tz = pytz.timezone("Europe/Berlin")
-
-        # Localize the naive datetime object.
-        date_in_germany = germany_tz.localize(date)
-
-        # Convert the datetime to UTC.
-        date_utc = date_in_germany.astimezone(pytz.utc)
-        self.cursor.execute('''INSERT INTO markers (time) VALUES (?)''', (date_utc,))
+        tz = pytz.timezone(TIMEZONE)
+        date_utc = tz.localize(date).astimezone(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
         
-        #self.cursor.execute('''INSERT INTO markers DEFAULT VALUES''')
+        self.cursor.execute('''INSERT INTO markers (time) VALUES (?)''', (date_utc,))
         self.conn.commit()
         
     def insert_particles(self, two_point_five, ten):

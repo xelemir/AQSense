@@ -3,11 +3,15 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>AQSense</title>
-    <link rel="icon" href="https://gruettecloud.com/static/AQSense.png" type="image/png" sizes="16x16">
+    <link rel="icon" href="/logo.png" type="image/png" sizes="16x16">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/site.webmanifest">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <style>
         * {
             font-family: 'Montserrat', sans-serif;
@@ -24,26 +28,23 @@
             height: 100svh;
         }
 
-        button {
+        .blue-button {
             font-family: 'Nunito', sans-serif;
             background-color: #4e4ad9;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
             cursor: pointer;
-            margin: 20px;
-            margin-top: 30px;
-            margin-bottom: 10px;
+            border-radius: 15px;
             display: flex;
+            padding: 15px;
             align-items: center;
             justify-content: center;
+            flex-direction: row;
             gap: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-top: 10px;
             transition: background-color 0.3s ease;
         }
 
-        #log-button:hover {
+        .blue-button:hover {
             background-color: #3c39b3;
         }
 
@@ -71,7 +72,7 @@
             display: flex;
         }
 
-        @media(min-width: 1000px) {
+        @media(min-width: 768px) {
             .desktop-only {
                 display: flex;
             }
@@ -81,13 +82,14 @@
             }
         }
 
-        /* Remove default appearance (works in many modern browsers) */
-        input[type="date"] {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        border: none;
-        background: transparent;
+        input[type="datetime-local"]::-webkit-inner-spin-button,
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            display: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="datetime-local"]:focus {
+            outline: none;
         }
 
         .invisible-date {
@@ -102,14 +104,19 @@
         <span class="material-symbols-rounded">security</span>
         <span>Dashboard</span>
     </a>
-    <h1 style="color: #fff; text-align: center; margin-bottom: -5px;">Air Quality Monitoring</h1>
+    <h1 style="color: #fff; text-align: center; margin-bottom: -5px; max-width: 90vw; font-size: 1.7em;">Air Quality Monitoring</h1>
     <p style="color: #c7c7c7; text-align: center; font-size: 12px; margin-bottom: 30px; max-width: 70vw;">AQSense helps you monitor the air quality in your area in real-time.</p>
-    <span style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; width: 700px; max-width: 80vw; gap: 0px;">
-        <span style="padding: 10px; display: flex; align-items: center; padding: 0;">
+    <span style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; width: 700px; max-width: 90vw; gap: 0px; margin-bottom: 7px;">
+        <span style="display: flex; align-items: center; padding: 0; justify-content: center;">
             <span class="desktop-only" style="color: #c7c7c7; font-size: 14px; margin-right: 10px; align-items: center; gap: 5px;">
                 <span class="material-symbols-rounded">lens_blur</span>
-                Air Quality: 
+                AQI:
                 <span id="quality" style="color: rgb(253, 226, 47); transition: color 0.6s ease;">Updating...</span>
+            </span>
+            <span class="mobile-only" style="background-color: #2b2b2f; padding: 10px; border-radius: 20px; align-items: center; padding: 0;">
+                <span style="color: #c7c7c7; padding: 0 5px; display: flex; padding: 4px;">
+                    <span id="quality-indicator" style="background-color: rgb(253, 226, 47); width: 11px; height: 11px; border-radius: 20px;transition: background-color 0.6s ease;"></span>
+                </span>
             </span>
         </span>
         <span style="background-color: #2b2b2f; padding: 10px; border-radius: 20px; display: flex; align-items: center; padding: 0;">
@@ -131,61 +138,126 @@
             <button class="interval-button" style="margin: 0; padding: 2px 0px; font-size: 12px; gap: 5px; width: 25px;" onclick="changeOffset(this, -1)">
                 <span class="material-symbols-rounded" style="font-size: 1.1em;">arrow_forward_ios</span>
             </button>
-            <span class="mobile-only" style="color: #c7c7c7; font-size: 14px; padding: 0 5px;">
-                <span id="quality-indicator" style="background-color: rgb(253, 226, 47); width: 10px; height: 10px; border-radius: 20px; transition: background-color 0.6s ease;"></span>
-            </span>
         </span>
     </span>
-    <img id="graph" src="/image/last_30_min" style="margin: 20px; width: 700px; max-width: 80vw; margin: 0;" />
+    <img id="graph" src="/image/last_30_min" style="margin: 20px; width: 700px; max-width: 90vw; margin: 0;" />
     
-    <input type="datetime-local" id="dateInput" style="display: none;" class="invisible-date" />
-    <button id="log-button" onclick="setMarker()">
-        <span id="log-button-icon" class="material-symbols-rounded" style="font-size: 24px;">warning</span>
-        Log Bad Air Quality
-    </button>
-    <span id="cancel-logging" onclick="cancelLogging()" style="color: #c7c7c7; font-size: 12px; margin-top: 0px; display: none; cursor: pointer;">Cancel</span>
+        
+    <div style="position: fixed; bottom: 0; right: 0; flex-direction: column; align-items: flex-start; justify-content: flex-end; padding: 20px; z-index: 100; max-width: 80vw;">
+        <div id="buttons" class="animate__animated animate__slideInRight" style="display: none; flex-direction: column; align-items: flex-end; justify-content: flex-end; gap: 10px;">
+            <input type="datetime-local" id="dateInputDummy" style="background-color: #4e4ad9; color: #c7c7c7; border: none; font-size: 16px; padding: 15px; border-radius: 10px;" class="invisible-date"/>
+            <div id="time-selection-window" class="animate__animated animate__slideInRight" style="background-color: #2b2b2f; color: #c7c7c7; opacity: 0.9; border: none; border-radius: 10px; padding: 15px; font-size: 16px; display: none; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 10px;">
+                <p style="font-size: 16px; margin: 0; color: #e7e7f7;">Is this correct?</p>
+                <input type="datetime-local" id="dateInput" style="background-color: #2b2b2f; color: #c7c7c7; border: none; font-size: 16px;"/>
+                <span style="display: flex; flex-direction: row; align-items: center; justify-content: end; gap: 10px; margin-top: 10px;">
+                    <button onclick="cancelLogging()" style="background-color: #3f3f47; color: #ffffff; border: none; border-radius: 10px; padding: 8px 15px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                        <span class="material-symbols-rounded" style="font-size: 1.3em;">close</span>
+                        <span>Cancel</span>
+                    </button>
+                    <button onclick="confirmLogging()" style="background-color: #4e4ad9; color: #ffffff; border: none; border-radius: 10px; padding: 8px 15px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                        <span class="material-symbols-rounded" style="font-size: 1.3em;">check</span>
+                        <span>Confirm</span>
+                    </button>
+                </span>
+            </div>
+            
+            <div class="blue-button" onclick="setMarker()" id="log-button">
+                <p style="font-size: 16px; margin: 0; color: #ffffff;">Log Bad Air Quality</p>
+                <span class="material-symbols-rounded align-icons-center" style="font-size: 30px; color: #ffffff;">warning</span>
+            </div>
+        </div>
+        <div style="width: 100%; display: flex; align-items: right; justify-content: right; flex-direction: row;">
+            <div onclick="toggleButtons()" id="log-button" class="blue-button">
+                <span id="toggle-button" class="material-symbols-rounded align-icons-center" style="font-size: 30px; color: #ffffff;">add</span>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 
 <script>
     var global_offset = 0;
 
+    /*toggleButtons();
+    document.getElementById('dateInputDummy').value = '2025-02-04 12:00';
+    document.getElementById('dateInput').classList.remove('invisible-date');
+    document.getElementById('cancel-logging').style.display = 'flex';
+    document.getElementById('dateInput').value = document.getElementById('dateInputDummy').value;
+    document.getElementById('time-selection-window').style.display = 'flex';
+    document.getElementById('log-button').style.display = 'none';
+    document.getElementById('cancel-logging').style.display = 'flex';*/
+
     document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('dateInput').addEventListener('change', () => {
-            if (document.getElementById('dateInput').value !== '') {
-                var localizedDate = new Date(document.getElementById('dateInput').value);
-                document.getElementById('log-button-icon').nextSibling.nodeValue = localizedDate.toLocaleString('de-DE', { timeZone: 'Europe/Berlin' });
-                document.getElementById('log-button-icon').innerText = 'save';
-                document.getElementById('cancel-logging').style.display = 'flex';
+        document.getElementById('dateInputDummy').addEventListener('change', () => {
+            if (document.getElementById('dateInputDummy').value !== '') {
+                document.getElementById('dateInput').value = document.getElementById('dateInputDummy').value;
+                document.getElementById('time-selection-window').style.display = 'block';
+                document.getElementById('log-button').style.display = 'none';
+
+                // if useragent contains ios
+                if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
+                    document.getElementById('log-button').style.display = 'none';
+                    document.getElementById('dateInputDummy').classList.add('invisible-date');
+                }
             }
         });
     });
 
-    function cancelLogging() {
-        document.getElementById('log-button-icon').innerText = 'warning';
-        document.getElementById('log-button-icon').nextSibling.nodeValue = 'Log Bad Air Quality';
-        document.getElementById('cancel-logging').style.display = 'none';
+    function toggleButtons() {
+        var buttons = document.getElementById('buttons');
+        if (buttons.style.display === 'none') {
+            document.getElementById('toggle-button').innerHTML = 'close';
+            buttons.classList.remove('animate__slideOutRight');
+            buttons.classList.add('animate__slideInRight');
+            buttons.style.display = 'block';
+
+            // if useragent contains ios 
+            if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
+                document.getElementById('log-button').style.display = 'none';
+                document.getElementById('dateInputDummy').classList.remove('invisible-date');
+                document.getElementById('dateInputDummy').value = new Date().toISOString().slice(0, 16);
+            }
+
+        } else {
+            cancelLogging();
+            document.getElementById('toggle-button').innerHTML = 'add';
+            buttons.classList.remove('animate__slideInRight');
+            buttons.classList.add('animate__slideOutRight');
+            setTimeout(function() {
+                buttons.style.display = 'none';
+                buttons.classList.remove('animate__slideOutRight');
+            }, 750);
+            // if useragent contains ios 
+            if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
+                document.getElementById('log-button').style.display = 'none';
+                document.getElementById('dateInputDummy').classList.add('invisible-date');
+            }
+        }
     }
 
-    function setMarker() {
-        // let user pick date and time from calendar
-        
-        if (document.getElementById('cancel-logging').style.display === 'none') {
-            document.getElementById('dateInput').showPicker();
-            return;
+    function cancelLogging() {
+        document.getElementById('dateInput').value = '';
+        document.getElementById('dateInputDummy').value = '';
+        document.getElementById('time-selection-window').style.display = 'none';
+        document.getElementById('log-button').style.display = 'flex';
+
+        if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
+            document.getElementById('toggle-button').innerHTML = 'add';
+            buttons.classList.remove('animate__slideInRight');
+            buttons.classList.add('animate__slideOutRight');
+            setTimeout(function() {
+                buttons.style.display = 'none';
+                buttons.classList.remove('animate__slideOutRight');
+            }, 750);
+            // if useragent contains ios 
+            if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
+                document.getElementById('log-button').style.display = 'none';
+                document.getElementById('dateInputDummy').classList.add('invisible-date');
+            }
         }
+    }
 
-        document.getElementById('log-button-icon').innerText = 'check';
-        document.getElementById('log-button').disabled = true;
-        document.getElementById('log-button').style.cursor = 'not-allowed';
-        document.getElementById('cancel-logging').style.display = 'none';
-        setTimeout(() => {
-            document.getElementById('log-button-icon').innerText = 'warning';
-            document.getElementById('log-button').disabled = false;
-            document.getElementById('log-button').style.cursor = 'pointer';
-            document.getElementById('log-button-icon').nextSibling.nodeValue = 'Log Bad Air Quality';
-        }, 1000);
-
+    function confirmLogging() {
         fetch('/set_marker', {
             method: 'POST',
             headers: {
@@ -196,7 +268,22 @@
             })
         }).then(response => {
             document.getElementById('graph').src = '/image/last_30_min?' + new Date().getTime();
+            cancelLogging();
+            document.getElementById('toggle-button').innerHTML = 'add';
+            buttons.classList.remove('animate__slideInRight');
+            buttons.classList.add('animate__slideOutRight');
+            setTimeout(function() {
+                buttons.style.display = 'none';
+                buttons.classList.remove('animate__slideOutRight');
+            }, 750);
         });
+    }
+
+    function setMarker() {
+        if (document.getElementById('dateInput').value === '') {
+            document.getElementById('dateInputDummy').showPicker();
+            return;
+        }
     }
 
     function changeInterval(button, interval) {

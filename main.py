@@ -1,13 +1,9 @@
+import datetime
 from sensor import SDS011
 from sql_connector import SqlConnector
 from push_notification import send
 import time
-
-try:
-    from push_secrets import *
-except ImportError:
-    endpoint, p256dh, auth, vapid_private, email = None, None, None, None, None
-    print("Starting without push notification support.")
+from config import *
 
 if __name__ == "__main__":
     sql = SqlConnector("database.db")
@@ -15,6 +11,13 @@ if __name__ == "__main__":
     
     
     while True:
+        if SLEEP_HOURS_START is not None and SLEEP_HOURS_END is not None:
+            current_time = datetime.datetime.now().time()
+            if current_time >= SLEEP_HOURS_START or current_time < SLEEP_HOURS_END:
+                sds011.sleep()
+                time.sleep(60)
+                continue
+        
         sds011.sleep(sleep=False)
         time.sleep(15)
         result = sds011.query()
@@ -29,16 +32,16 @@ if __name__ == "__main__":
                 if pm25 - avg_pm25 > 3.5 and sql.get_last_marker_within(4) is None and sql.get_last_particle(5) is not None:
 
                     # Pollution spike detected, log and send notification if possible
-                    if endpoint is not None:
+                    if PUSH_NOTIFICATIONS is True:
                         try:
                             send(
                                 title="Pollution Spike Detected!",
                                 message=f"The PM2.5 level has just spiked to {pm25} µg/m³. AVG: {round(avg_pm25, 1)} µg/m³. Difference: {round(pm25 - avg_pm25, 1)} µg/m³.",
-                                endpoint=endpoint,
-                                p256dh=p256dh,
-                                auth=auth,
-                                vapid_private=vapid_private,
-                                email=email,
+                                endpoint=PUSH_ENDPOINT,
+                                p256dh=PUSH_P256DH,
+                                auth=PUSH_AUTH,
+                                vapid_private=PUSH_VAPID_PRIVATE_KEY,
+                                email=PUSH_EMAIL
                             )
                         except Exception as e:
                             print(f"Failed to send push notification: {e}")

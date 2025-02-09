@@ -5,3 +5,4 @@ plot.png
 *.db
 .DS_Store
 push_secrets.py
+config.py

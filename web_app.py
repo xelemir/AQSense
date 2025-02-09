@@ -8,11 +8,6 @@ from sql_connector import SqlConnector
 import subprocess
 import psutil
 import time
-try:
-    from push_secrets import vapid_public, email
-except ImportError:
-    vapid_public = None
-    email = None
 
 app = Flask(__name__)
 
@@ -22,7 +17,7 @@ def index():
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html', vapid_public=vapid_public)
+    return render_template('dashboard.html')
 
 @app.route('/logo.png')
 def logo():
