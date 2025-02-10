@@ -178,7 +178,12 @@
                     Clear the database to remove all data. Caution: This action is irreversible.
                 </p>
                 <span style="display: flex; gap: 10px;">
-                    <button onclick="clearDB()">Clear Database</button>
+                    <span style="display: flex; gap: 10px;">
+                        <button onclick="clearDB('all')">Clear All</button>
+                    </span>
+                    <span style="display: flex; gap: 10px;">
+                        <button onclick="clearDB('today')">Clear Today</button>
+                    </span>
                 </span>
             </div>
         </div>

@@ -261,13 +261,18 @@ function controlSystem(action) {
         });
 }
 
-function clearDB() {
+function clearDB(time) {
     var result = confirm('Are you sure you want to clear the database? This action is irreversible.');
     if (!result) {
         return;
     }
 
-    fetch('/clear_db', {
+    var url = '/clear_db';
+    if (time === 'today') {
+        url = '/clear_db_today';
+    }
+
+    fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
