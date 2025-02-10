@@ -12,8 +12,11 @@ if __name__ == "__main__":
     
     while True:
         if SLEEP_HOURS_START is not None and SLEEP_HOURS_END is not None:
+            start = datetime.datetime.strptime(SLEEP_HOURS_START, "%H:%M").time()
+            end = datetime.datetime.strptime(SLEEP_HOURS_END, "%H:%M").time()
             current_time = datetime.datetime.now().time()
-            if current_time >= SLEEP_HOURS_START or current_time < SLEEP_HOURS_END:
+            
+            if current_time >= start or current_time < end:
                 sds011.sleep()
                 time.sleep(60)
                 continue
