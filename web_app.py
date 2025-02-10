@@ -193,10 +193,9 @@ def get_system_load():
         "db_size": db_size_mb
     })    
     
-@app.route('/clear_db', methods=['GET'])
+@app.route('/clear_db', methods=['POST'])
 def clear_db():
     sql = SqlConnector("database.db")
-    sql.delete_times()
     sql.delete_markers()
     sql.delete_particles()
     return jsonify({"status": "success"})
