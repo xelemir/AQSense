@@ -4,11 +4,12 @@ from sql_connector import SqlConnector
 from push_notification import send
 import time
 from config import *
+from threading import Thread
+import requests
 
 if __name__ == "__main__":
     sql = SqlConnector("database.db")
     sds011 = SDS011("/dev/ttyUSB0")
-    
     
     while True:
         if SLEEP_HOURS_START is not None and SLEEP_HOURS_END is not None:
@@ -34,21 +35,21 @@ if __name__ == "__main__":
                 avg_pm25 = avg_last[0]
                 if pm25 - avg_pm25 > 3.5 and sql.get_last_marker_within(4) is None and sql.get_last_particle(5) is not None:
 
-                    # Pollution spike detected, log and send notification if possible
-                    if PUSH_NOTIFICATIONS is True:
-                        try:
-                            send(
-                                title="Pollution Spike Detected!",
-                                message=f"The PM2.5 level has just spiked to {pm25} µg/m³. AVG: {round(avg_pm25, 1)} µg/m³. Difference: {round(pm25 - avg_pm25, 1)} µg/m³.",
-                                endpoint=PUSH_ENDPOINT,
-                                p256dh=PUSH_P256DH,
-                                auth=PUSH_AUTH,
-                                vapid_private=PUSH_VAPID_PRIVATE_KEY,
-                                email=PUSH_EMAIL
-                            )
-                        except Exception as e:
-                            print(f"Failed to send push notification: {e}")
-                    
+                    if PUSH_NOTIFICATIONS:
+                        # Send push notification
+                        Thread(
+                            target=requests.post, 
+                            args=("https://www.gruettecloud.com/sendpush",), 
+                            kwargs={
+                                "json": {
+                                    "title": "Pollution Alert",
+                                    "message": f"The PM2.5 level has just spiked to {pm25} µg/m³. AVG: {round(avg_pm25, 1)} µg/m³. Difference: {round(pm25 - avg_pm25, 1)} µg/m³.",
+                                    "authenticity_key": PUSH_KEY
+                                },
+                                "headers": {"Content-Type": "application/json"}
+                            }
+                        ).start()
+                        
                     sql.insert_marker()
                     
             sql.insert_particles(pm25, pm10)
