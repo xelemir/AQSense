@@ -139,6 +139,9 @@
             <button class="interval-button" style="margin: 0; padding: 2px 0px; font-size: 12px; gap: 5px; width: 25px;" onclick="changeOffset(this, -1)">
                 <span class="material-symbols-rounded" style="font-size: 1.1em;">arrow_forward_ios</span>
             </button>
+            <button class="interval-button" style="margin: 0; padding: 2px 0px; font-size: 12px; gap: 5px; width: 25px;" onclick="refreshGraph()">
+                <span id="refresh-icon" class="material-symbols-rounded animate__animated" style="font-size: 1.1em;">sync</span>
+            </button>
         </span>
     </span>
     <img id="graph" src="/image/last_30_min" style="margin: 20px; width: 700px; max-width: 90vw; margin: 0;" />
@@ -196,7 +199,7 @@
     });
 
     document.onload = () => {
-        document.getElementById('graph').src = '/image?' + new Date().getTime();
+        document.getElementById('graph').src = '/image/last_30_min?' + new Date().getTime();
     }
     
     document.addEventListener('DOMContentLoaded', () => {
@@ -206,4 +209,14 @@
             rgb = updateAirQuality(rgb);
         }, 60000);
     });
+
+    function refreshGraph() {
+        document.getElementById('refresh-icon').classList.add('animate__rotateIn');
+        setTimeout(() => {
+            document.getElementById('refresh-icon').classList.remove('animate__rotateIn');
+        }, 750);
+
+        var interval = document.getElementById('graph').src.split('/').pop();
+        document.getElementById('graph').src = '/image/' + interval + '?' + new Date().getTime();
+    }
 </script>
