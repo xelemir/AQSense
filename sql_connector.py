@@ -226,6 +226,11 @@ class SqlConnector:
         self.cursor.execute(''' SELECT AVG(two_point_five), AVG(ten) FROM particles WHERE time >= datetime('now', '-{} minutes') AND time < datetime('now', '-{} minutes') ORDER BY time DESC '''.format(sample_size + offset, offset))
         return self.cursor.fetchone()
     
+    def get_markers_desc(self):
+        self.create_table('markers')
+        self.cursor.execute('''SELECT * FROM markers ORDER BY time DESC''')
+        return self.cursor.fetchall()
+    
     def delete_markers(self, date=None):
         if date is None:
             self.cursor.execute('''DELETE FROM markers''')
@@ -238,6 +243,10 @@ class SqlConnector:
             self.cursor.execute('''DELETE FROM particles''')
         elif date == "today":
             self.cursor.execute('''DELETE FROM particles WHERE time >= datetime(date('now'))''')
+        self.conn.commit()
+        
+    def delete_marker(self, id_):
+        self.cursor.execute('''DELETE FROM markers WHERE id = ?''', (id_,))
         self.conn.commit()
         
     def __del__(self):

@@ -2,12 +2,14 @@ import datetime
 import os
 from flask import Flask, jsonify, request
 from flask import send_file, render_template
+import pytz
 from visualize import visualize_data
 from sensor import calculate_aqi_pm25
 from sql_connector import SqlConnector
 import subprocess
 import psutil
 import time
+from config import TIMEZONE
 
 app = Flask(__name__)
 
@@ -17,7 +19,14 @@ def index():
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    sql = SqlConnector("database.db")
+    spikes = [list(elem) for elem in sql.get_markers_desc()]
+    for spike in spikes:
+        try:
+            spike[1] = datetime.datetime.strptime(spike[1], "%Y-%m-%d %H:%M:%S").replace(tzinfo=pytz.utc).astimezone(pytz.timezone(TIMEZONE)).strftime("%d.%m.%Y %H:%M:%S")
+        except:
+            spike[1] = datetime.datetime.strptime(spike[1], "%Y-%m-%d %H:%M:%S%z").replace(tzinfo=pytz.utc).astimezone(pytz.timezone(TIMEZONE)).strftime("%d.%m.%Y %H:%M:%S")
+    return render_template('dashboard.html', spikes=spikes)
 
 @app.route('/logo.png')
 def logo():
@@ -205,6 +214,13 @@ def clear_db_today():
     sql = SqlConnector("database.db")
     sql.delete_markers("today")
     sql.delete_particles("today")
+    return jsonify({"status": "success"})
+
+@app.route('/delete_spike/', methods=['POST'])
+def delete_spike():
+    sql = SqlConnector("database.db")
+    id_ = request.json["id"]
+    sql.delete_marker(id_)
     return jsonify({"status": "success"})
 
 if __name__ == '__main__':
