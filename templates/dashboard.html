@@ -118,7 +118,6 @@
         @media(min-width: 1408px) {
             .card {
                 width: 320px;
-                min-height: 170px;
             }
 
             .desktop-only {
@@ -136,24 +135,20 @@
             }
         }
 
-        /* Scrollbar width */
         ::-webkit-scrollbar {
             width: 10px;
         }
 
-        /* Track (background) */
         ::-webkit-scrollbar-track {
             background: #333;
             border-radius: 10px;
         }
 
-        /* Handle (the draggable part) */
         ::-webkit-scrollbar-thumb {
             background: #4e4ad9;
             border-radius: 10px;
         }
 
-        /* Handle on hover */
         ::-webkit-scrollbar-thumb:hover {
             background: #3c39b3;
         }
@@ -241,22 +236,6 @@
             </div>
             <div class="card" style="height: 190px;">
                 <div class="card-body">
-                    <h3 class="card-title" style="margin-bottom: 15px;">
-                        <span class="material-symbols-rounded" style="font-size: 1.4em;">planner_review</span>
-                        Pollution Spikes
-                    </h3>
-                    <span style="color: #c7c7c7; font-size: 12px; display: flex; flex-direction: column; overflow-y: auto; height: 118px; width: calc(100% - 15px); margin-top: 5px;">
-                        {% for spike in spikes %}
-                        <div class="spike_log" style="padding: 4px 8px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; width: calc(100% - 20px); cursor: text;" onmouseover="this.querySelector('.delete').style.display = 'flex';" onmouseout="this.querySelector('.delete').style.display = 'none';">
-                            <span style="color: #c7c7c7; font-size: 12px;">{{ spike[1] }}</span>
-                            <span class="delete material-symbols-rounded" style="color: #c7c7c7; font-size: 14px; display: none; cursor: pointer;" onclick="deleteSpike('{{ spike[0] }}')">delete</span>
-                        </div>
-                        {% endfor %}
-                    </span>
-                </div>
-            </div>
-            <div class="card" style="height: 190px;">
-                <div class="card-body">
                     <h3 class="card-title">
                         <span class="material-symbols-rounded" style="font-size: 1.4em;">memory</span>
                         System
@@ -282,6 +261,22 @@
                         <span id="db-size" style="color: #c7c7c7; font-size: 12px;">0 MB</span>
                     </div>
                     <span id="system-load-last-updated" style="color: #c7c7c7; font-size: 12px;">Last updated: Updating...</span>
+                </div>
+            </div>
+            <div class="card" style="height: 270px;">
+                <div class="card-body">
+                    <h3 class="card-title" style="margin-bottom: 15px;">
+                        <span class="material-symbols-rounded" style="font-size: 1.4em;">planner_review</span>
+                        Pollution Spikes
+                    </h3>
+                    <span style="color: #c7c7c7; font-size: 12px; display: flex; flex-direction: column; overflow-y: auto; height: 197px; width: calc(100% - 15px); margin-top: 5px;">
+                        {% for spike in spikes %}
+                        <div class="spike_log" style="padding: 4px 8px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; width: calc(100% - 20px); cursor: text;" onmouseover="this.querySelector('.delete').style.display = 'flex';" onmouseout="this.querySelector('.delete').style.display = 'none';">
+                            <span style="color: #c7c7c7; font-size: 12px;">{{ spike[1] }}</span>
+                            <span class="delete material-symbols-rounded" style="color: #c7c7c7; font-size: 14px; display: none; cursor: pointer;" onclick="deleteSpike('{{ spike[0] }}')">delete</span>
+                        </div>
+                        {% endfor %}
+                    </span>
                 </div>
             </div>
         </div>

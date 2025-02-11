@@ -87,12 +87,12 @@ def get_weather():
     # ---------------------------
     # Plot the data
     # ---------------------------
-    host.plot(hourly_dataframe['date'], hourly_dataframe['temperature_2m'], color='lightblue', label='Temperature (°C)')
-    par1.plot(hourly_dataframe['date'], hourly_dataframe['precipitation_probability'], color='purple', label='Precipitation Probability (%)')
+    host.plot(hourly_dataframe['date'], hourly_dataframe['temperature_2m'], color='#ff6b6b', label='Temperature (°C)')
+    par1.plot(hourly_dataframe['date'], hourly_dataframe['precipitation_probability'], color='#4e4ad9', label='Precipitation Probability (%)')
     date_nums = mdates.date2num(hourly_dataframe['date'])
     bar_width = (date_nums[1] - date_nums[0]) * 0.8 if len(date_nums) > 1 else 0.02
-    par2.bar(hourly_dataframe['date'], hourly_dataframe['precipitation'], width=bar_width, color='green', alpha=0.7, label='Precipitation (mm)')
-    par3.plot(hourly_dataframe['date'], hourly_dataframe['wind_speed_10m'], color='orange', label='Wind Speed (m/s)')
+    par2.bar(hourly_dataframe['date'], hourly_dataframe['precipitation'], width=bar_width, color='#2196F3', alpha=0.2, label='Precipitation (mm)')
+    par3.plot(hourly_dataframe['date'], hourly_dataframe['wind_speed_10m'], color='#66e17d', label='Wind Speed (m/s)')
 
     # ---------------------------
     # Format the axes (Make all tick labels white)
@@ -100,7 +100,6 @@ def get_weather():
     host.xaxis.set_major_locator(mdates.AutoDateLocator())
     host.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 
-    # ✅ **Ensure all tick labels (data points) on all axes are WHITE**
     host.tick_params(axis='x', colors='#27272f', rotation=45)  # Host (Time) x-axis white
     host.tick_params(axis='y', colors='#27272f')  # Host (Temperature) y-axis white
     par1.tick_params(axis='y', colors='#27272f')  # Precipitation Probability y-axis white
@@ -110,16 +109,16 @@ def get_weather():
 
     # Set the y-axis labels and their colors (variable colors remain as defined)
     host.set_ylabel("Temperature (°C)")
-    host.axis["left"].label.set_color('lightblue')
+    host.axis["left"].label.set_color('#ff6b6b')
 
     par1.set_ylabel("Precipitation Probability (%)")
-    par1.axis["left"].label.set_color('purple')
+    par1.axis["left"].label.set_color('#4e4ad9')
 
     par2.set_ylabel("Precipitation (mm)")
-    par2.axis["left"].label.set_color('green')
+    par2.axis["left"].label.set_color('#2196F3')
 
     par3.set_ylabel("Wind Speed (m/s)")
-    par3.axis["left"].label.set_color('orange')
+    par3.axis["left"].label.set_color('#66e17d')
 
     # Ensure the host axis background remains dark
     host.patch.set_facecolor('#27272f')
@@ -127,9 +126,6 @@ def get_weather():
     # Set all axis spines to white
     for ax in [host, par1, par2, par3]:
         for side in ax.axis:
-            if side == 'left':
-                ax.axis[side].line.set_color('gray')
-            else:
                 ax.axis[side].line.set_color('#27272f')
 
     plt.savefig('data/weather.png', facecolor=fig.get_facecolor(), transparent=True)
