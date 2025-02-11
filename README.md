@@ -1,3 +1,5 @@
+![AQSense Screenshot](data/AQSenseDashboard.png)
+
 # AQSense - Measure and Visualize Air Quality
 
 AQSense is an air quality monitoring project that leverages a Raspberry Pi and the SDS011 sensor to measure air quality. Data is stored in a SQLite database and visualized through a web server.
