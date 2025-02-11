@@ -3,6 +3,7 @@ import os
 from flask import Flask, jsonify, request
 from flask import send_file, render_template
 import pytz
+from weather import get_weather
 from visualize import visualize_data
 from sensor import calculate_aqi_pm25
 from sql_connector import SqlConnector
@@ -45,6 +46,11 @@ def image(range_):
     offset = int(request.args.get('offset', 0))
     visualize_data(range_, offset)
     return send_file("data/plot.png", mimetype='image/png')
+
+@app.route('/weather')
+def weather():
+    get_weather()
+    return send_file("data/weather.png", mimetype='image/png')
 
 @app.route('/set_marker', methods=['POST'])
 def set_marker():

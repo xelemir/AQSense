@@ -61,12 +61,19 @@
             justify-content: start;
             align-items: flex-start;
             gap: 20px;
-            width: 864px;
+            width: 664px;
             max-width: 90vw;
-            margin: 20px;
-            margin-top: 0px;
+            margin: 0 20px;
             padding-bottom: 20px;
+        }
 
+        .container-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            gap: 0;
+            flex-direction: column;
         }
       
         .card {
@@ -83,9 +90,9 @@
         .card-body {
             width: 100%;
             height: auto;
-            display: block;
+            display: flex;
             margin: 10px;
-        
+            flex-direction: column;
         }
     
         .card-title {
@@ -108,13 +115,24 @@
             display: none;
         }
 
-        @media(min-width: 1000px) {
+        @media(min-width: 1408px) {
             .card {
-                width: 420px;
+                width: 320px;
+                min-height: 170px;
             }
 
             .desktop-only {
                 display: block;
+            }
+
+            .container {
+                margin: 0 10px;
+            }
+
+            .container-wrapper {
+                flex-direction: row;
+                justify-content: center;
+                align-items: start;
             }
         }
 
@@ -157,119 +175,147 @@
         <span class="desktop-only">Back</span>
     </a>
     <h1 style="color: #fff; text-align: center; margin-top: 13px;">Dashboard</h1>
-    <div class="container">
-        <div class="card">
-            <div class="card-body">
-                <h3 class="card-title">
-                    <span class="material-symbols-rounded" style="font-size: 1.4em;">desktop_windows</span>
-                    GUI Service
-                </h3>
-                <p class="card-text">Status of the web-based GUI for the Air Quality Monitoring.</p>
-                <div>
-                    <span style="color: #c7c7c7; font-size: 12px;">Status: </span>
-                    <span style="color:rgb(102, 225, 125); font-size: 12px;">Online</span>
-                </div>
-                <span style="color: #c7c7c7; font-size: 12px;">Last updated: Just now</span>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <h3 class="card-title">
-                    <span class="material-symbols-rounded" style="font-size: 1.4em;">emergency_heat_2</span>
-                    Air Quality Service
-                </h3>
-                <p class="card-text">Status of the Air Quality Monitoring service using the SDS011 sensor.</p>
-                <div>
-                    <span style="color: #c7c7c7; font-size: 12px;">Status: </span>
-                    <span id="status-air-quality-status" style="color:rgb(253, 226, 47); font-size: 12px; transition: color 0.6s ease;">Updating...</span>
-                </div>
-                <span id="status-air-quality-last-updated" style="color: #c7c7c7; font-size: 12px; transition: color 0.6s ease;">Updating...</span>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <h3 class="card-title">
-                    <span class="material-symbols-rounded" style="font-size: 1.4em;">terminal</span>
-                    Control Panel
-                </h3>
-                <p class="card-text">
-                    Control the Air Quality Monitoring service. Start or stop the service.
-                </p>
-                <span style="display: flex; gap: 10px;">
-                    <button id="controlSystem" onclick="">Updating...</button>
-                </span>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <h3 class="card-title">
-                    <span class="material-symbols-rounded" style="font-size: 1.4em;">database</span>
-                    Clear Database
-                </h3>
-                <p class="card-text">
-                    Clear the database to remove all data. Caution: This action is irreversible.
-                </p>
-                <span style="display: flex; gap: 10px;">
-                    <span style="display: flex; gap: 10px;">
-                        <button onclick="clearDB('all')">Clear All</button>
-                    </span>
-                    <span style="display: flex; gap: 10px;">
-                        <button onclick="clearDB('today')">Clear Today</button>
-                    </span>
-                </span>
-            </div>
-        </div>
-        <div class="card" style="height: 190px;">
-            <div class="card-body">
-                <h3 class="card-title" style="margin-bottom: 15px;">
-                    <span class="material-symbols-rounded" style="font-size: 1.4em;">planner_review</span>
-                    Pollution Spikes
-                </h3>
-                <span style="color: #c7c7c7; font-size: 12px; display: flex; flex-direction: column; overflow-y: auto; height: 125px; width: calc(100% - 15px); margin-top: 5px;">
-                    {% for spike in spikes %}
-                    <div class="spike_log" style="padding: 4px 8px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; width: calc(100% - 20px); cursor: text;" onmouseover="this.querySelector('.delete').style.display = 'flex';" onmouseout="this.querySelector('.delete').style.display = 'none';">
-                        <span style="color: #c7c7c7; font-size: 12px;">{{ spike[1] }}</span>
-                        <span class="delete material-symbols-rounded" style="color: #c7c7c7; font-size: 14px; display: none; cursor: pointer;" onclick="deleteSpike('{{ spike[0] }}')">delete</span>
+    <div class="container-wrapper">
+        
+        <div class="container">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">
+                        <span class="material-symbols-rounded" style="font-size: 1.4em;">desktop_windows</span>
+                        GUI Service
+                    </h3>
+                    <p class="card-text">Status of the web-based GUI for the Air Quality Monitoring.</p>
+                    <div>
+                        <span style="color: #c7c7c7; font-size: 12px;">Status: </span>
+                        <span style="color:rgb(102, 225, 125); font-size: 12px;">Online</span>
                     </div>
-                    {% endfor %}
-                </span>
+                    <span style="color: #c7c7c7; font-size: 12px;">Last updated: Just now</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">
+                        <span class="material-symbols-rounded" style="font-size: 1.4em;">emergency_heat_2</span>
+                        Air Quality Service
+                    </h3>
+                    <p class="card-text">Status of the Air Quality Monitoring service using the SDS011 sensor.</p>
+                    <div>
+                        <span style="color: #c7c7c7; font-size: 12px;">Status: </span>
+                        <span id="status-air-quality-status" style="color:rgb(253, 226, 47); font-size: 12px; transition: color 0.6s ease;">Updating...</span>
+                    </div>
+                    <span id="status-air-quality-last-updated" style="color: #c7c7c7; font-size: 12px; transition: color 0.6s ease;">Updating...</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">
+                        <span class="material-symbols-rounded" style="font-size: 1.4em;">terminal</span>
+                        Control Panel
+                    </h3>
+                    <p class="card-text">
+                        Control the Air Quality Monitoring service. Start or stop the service.
+                    </p>
+                    <span style="display: flex; gap: 10px;">
+                        <button id="controlSystem" onclick="">Updating...</button>
+                    </span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">
+                        <span class="material-symbols-rounded" style="font-size: 1.4em;">database</span>
+                        Clear Database
+                    </h3>
+                    <p class="card-text">
+                        Clear the database to remove all data. Caution: This action is irreversible.
+                    </p>
+                    <span style="display: flex; gap: 10px;">
+                        <span style="display: flex; gap: 10px;">
+                            <button onclick="clearDB('all')">Clear All</button>
+                        </span>
+                        <span style="display: flex; gap: 10px;">
+                            <button onclick="clearDB('today')">Clear Today</button>
+                        </span>
+                    </span>
+                </div>
+            </div>
+            <div class="card" style="height: 190px;">
+                <div class="card-body">
+                    <h3 class="card-title" style="margin-bottom: 15px;">
+                        <span class="material-symbols-rounded" style="font-size: 1.4em;">planner_review</span>
+                        Pollution Spikes
+                    </h3>
+                    <span style="color: #c7c7c7; font-size: 12px; display: flex; flex-direction: column; overflow-y: auto; height: 118px; width: calc(100% - 15px); margin-top: 5px;">
+                        {% for spike in spikes %}
+                        <div class="spike_log" style="padding: 4px 8px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; width: calc(100% - 20px); cursor: text;" onmouseover="this.querySelector('.delete').style.display = 'flex';" onmouseout="this.querySelector('.delete').style.display = 'none';">
+                            <span style="color: #c7c7c7; font-size: 12px;">{{ spike[1] }}</span>
+                            <span class="delete material-symbols-rounded" style="color: #c7c7c7; font-size: 14px; display: none; cursor: pointer;" onclick="deleteSpike('{{ spike[0] }}')">delete</span>
+                        </div>
+                        {% endfor %}
+                    </span>
+                </div>
+            </div>
+            <div class="card" style="height: 190px;">
+                <div class="card-body">
+                    <h3 class="card-title">
+                        <span class="material-symbols-rounded" style="font-size: 1.4em;">memory</span>
+                        System
+                    </h3>
+                    <div>
+                        <span style="color: #c7c7c7; font-size: 12px;">Hostname: </span>
+                        <span id="hostname" style="color: #c7c7c7; font-size: 12px;">Unkown</span>
+                    </div>
+                    <div>
+                        <span style="color: #c7c7c7; font-size: 12px;">CPU: </span>
+                        <span id="cpu-util" style="color: #c7c7c7; font-size: 12px;">0.0 %</span>
+                    </div>
+                    <div>
+                        <span style="color: #c7c7c7; font-size: 12px;">RAM: </span>
+                        <span id="ram-util" style="color: #c7c7c7; font-size: 12px;">0.0 GB of 0.0 GB used</span>
+                    </div>
+                    <div>
+                        <span style="color: #c7c7c7; font-size: 12px;">Disk: </span>
+                        <span id="disk-util" style="color: #c7c7c7; font-size: 12px;">0.0 GB of 0.0 GB used</span>
+                    </div>
+                    <div>
+                        <span style="color: #c7c7c7; font-size: 12px;">Database: </span>
+                        <span id="db-size" style="color: #c7c7c7; font-size: 12px;">0 MB</span>
+                    </div>
+                    <span id="system-load-last-updated" style="color: #c7c7c7; font-size: 12px;">Last updated: Updating...</span>
+                </div>
             </div>
         </div>
-        <div class="card" style="height: 190px;">
-            <div class="card-body">
-                <h3 class="card-title">
-                    <span class="material-symbols-rounded" style="font-size: 1.4em;">memory</span>
-                    System
-                </h3>
-                <div>
-                    <span style="color: #c7c7c7; font-size: 12px;">Hostname: </span>
-                    <span id="hostname" style="color: #c7c7c7; font-size: 12px;">Unkown</span>
+        <div class="container">
+            <div class="card" style="width: 100%; height: auto; padding: 0;">
+                <div class="card-body" style="margin: 0; padding: 0;">
+                    <!--<h3 class="card-title" style="margin-bottom: 15px;">
+                        <span class="material-symbols-rounded" style="font-size: 1.4em;">lens_blur</span>
+                        Air Quality
+                    </h3>-->
+                    <img src="/image/last_30_min" style="width: 100%; object-fit: cover; border-radius: 9px;">
                 </div>
-                <div>
-                    <span style="color: #c7c7c7; font-size: 12px;">CPU: </span>
-                    <span id="cpu-util" style="color: #c7c7c7; font-size: 12px;">0.0 %</span>
+            </div>
+            <div class="card" style="width: 100%; height: auto; padding: 0; margin: 0; padding: 0;">
+                <div class="card-body" style="margin: 0; padding: 0;">
+                    <!--<h3 class="card-title" style="margin-bottom: 15px;">
+                        <span class="material-symbols-rounded" style="font-size: 1.4em;">cloud</span>
+                        Weather
+                    </h3>-->
+                    <img id="weather-img" src="" style="width: 100%; object-fit: cover; border-radius: 9px; margin: 0; padding: 0;">
                 </div>
-                <div>
-                    <span style="color: #c7c7c7; font-size: 12px;">RAM: </span>
-                    <span id="ram-util" style="color: #c7c7c7; font-size: 12px;">0.0 GB of 0.0 GB used</span>
-                </div>
-                <div>
-                    <span style="color: #c7c7c7; font-size: 12px;">Disk: </span>
-                    <span id="disk-util" style="color: #c7c7c7; font-size: 12px;">0.0 GB of 0.0 GB used</span>
-                </div>
-                <div>
-                    <span style="color: #c7c7c7; font-size: 12px;">Database: </span>
-                    <span id="db-size" style="color: #c7c7c7; font-size: 12px;">0 MB</span>
-                </div>
-                <span id="system-load-last-updated" style="color: #c7c7c7; font-size: 12px;">Last updated: Updating...</span>
             </div>
         </div>
     </div>
-
 </body>
 </html>
-
 <script>
+    window.onload = function () {
+        console.log("All images are fully loaded!");
+        document.getElementById('weather-img').src = '/weather';
+    };
+
+
+
     // on DOM load
     document.addEventListener('DOMContentLoaded', () => {
         const intervalId = setInterval(() => {

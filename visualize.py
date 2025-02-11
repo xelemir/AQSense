@@ -101,7 +101,7 @@ def visualize_data(range_="last_2_hours", offset=0):
     # --------------------------------------------------------
     # 3) Plot
     # --------------------------------------------------------
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(12, 5))
     fig.patch.set_facecolor('#22222a')  # Figure background
     ax.set_facecolor('#22222a')         # Axes background
 

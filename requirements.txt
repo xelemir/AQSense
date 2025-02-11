@@ -5,3 +5,8 @@ psutil
 pyserial
 pytz
 pywebpush
+requests-cache
+retry-requests
+numpy
+pandas
+openmeteo_requests

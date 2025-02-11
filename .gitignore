@@ -7,3 +7,5 @@ plot.png
 push_secrets.py
 config.py
 config2.py
+*.sqlite
+weather.png
