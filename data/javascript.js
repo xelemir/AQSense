@@ -74,6 +74,17 @@ function confirmLogging() {
     });
 }
 
+var particle_view = "pm_2_point_5";
+function toggleParticleView() {
+    if (particle_view === "pm_2_point_5") {
+        particle_view = "pm_10";
+    } else {
+        particle_view = "pm_2_point_5";
+    }
+
+    changeInterval(document.getElementById('last_30_min_button'), 'last_30_min');
+}
+
 function setMarker() {
     if (document.getElementById('dateInput').value === '') {
         document.getElementById('dateInputDummy').showPicker();
@@ -83,7 +94,7 @@ function setMarker() {
 
 function changeInterval(button, interval) {
     global_offset = 0;
-    document.getElementById('graph').src = '/image/' + interval + '?' + new Date().getTime();
+    document.getElementById('graph').src = '/image/' + interval + '?' + new Date().getTime() + '&data_type=' + particle_view;
 
     const buttons = document.getElementsByClassName('interval-button');
     for (let i = 0; i < buttons.length; i++) {
@@ -111,9 +122,9 @@ function changeOffset(button, offset) {
     
 
     if (interval === '30m') {
-        document.getElementById('graph').src = '/image/last_30_min?offset=' + global_offset + '&t=' + new Date().getTime();
+        document.getElementById('graph').src = '/image/last_30_min?offset=' + global_offset + '&t=' + new Date().getTime() + '&data_type=' + particle_view;
     } else if (interval === '2h') {
-        document.getElementById('graph').src = '/image/last_2_hours?offset=' + global_offset + '&t=' + new Date().getTime();
+        document.getElementById('graph').src = '/image/last_2_hours?offset=' + global_offset + '&t=' + new Date().getTime() + '&data_type=' + particle_view;
     }
 }
 

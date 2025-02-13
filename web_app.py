@@ -44,7 +44,8 @@ def js():
 @app.route('/image/<range_>')
 def image(range_):
     offset = int(request.args.get('offset', 0))
-    visualize_data(range_, offset)
+    data_type = request.args.get('data_type', 'pm_2_point_5')
+    visualize_data(range_, offset, data_type)
     return send_file("data/plot.png", mimetype='image/png')
 
 @app.route('/weather')

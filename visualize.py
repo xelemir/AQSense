@@ -24,7 +24,7 @@ def round_down_to_day(dt):
     """
     return dt.replace(hour=0, minute=0, second=0, microsecond=0)
 
-def visualize_data(range_="last_2_hours", offset=0):
+def visualize_data(range_="last_2_hours", offset=0, data_type="pm_2_point_5"):
     # Decide on binning function based on the range_
     if range_ == "today":
         bin_size_minutes = 10
@@ -53,10 +53,12 @@ def visualize_data(range_="last_2_hours", offset=0):
     # --------------------------------------------------------
     # 1) Group data by the chosen binning function
     # --------------------------------------------------------
-    grouped = {}
+    grouped_pm_2_point_5 = {}
+    grouped_pm_10 = {}
     for entry in data:
         dt_str = entry[1]             # "YYYY-mm-dd HH:MM:SS"
-        data_value = entry[2]
+        data_value_pm_2_point_5 = entry[2]
+        data_value_pm_10 = entry[3]
         try:
             dt = datetime.strptime(dt_str, "%Y-%m-%d %H:%M:%S")
         except ValueError:
@@ -64,22 +66,30 @@ def visualize_data(range_="last_2_hours", offset=0):
             
         dt_bin = bin_func(dt)         # Round down to the bin
 
-        grouped.setdefault(dt_bin, []).append(data_value)
+        grouped_pm_2_point_5.setdefault(dt_bin, []).append(data_value_pm_2_point_5)
+        grouped_pm_10.setdefault(dt_bin, []).append(data_value_pm_10)
 
     # Compute average (or another aggregate) for each bin
     times_binned = []
-    data_binned = []
-    data_binned_max = []
-    data_binned_min = []
-    for key_dt in sorted(grouped.keys()):
-        values = grouped[key_dt]
-        avg_val = sum(values) / len(values)
-        max_val = max(values)
-        min_val = min(values)
+    data_binned_pm_2_point_5 = []
+    data_binned_max_pm_2_point_5 = []
+    data_binned_min_pm_2_point_5 = []
+    data_binned_pm_10 = []
+    
+    for key_dt in sorted(grouped_pm_2_point_5.keys()):
+        values_pm_2_point_5 = grouped_pm_2_point_5[key_dt]
+        avg_val = sum(values_pm_2_point_5) / len(values_pm_2_point_5)
+        max_val = max(values_pm_2_point_5)
+        min_val = min(values_pm_2_point_5)
         times_binned.append(key_dt)
-        data_binned.append(avg_val)
-        data_binned_max.append(max_val)
-        data_binned_min.append(min_val)
+        data_binned_pm_2_point_5.append(avg_val)
+        data_binned_max_pm_2_point_5.append(max_val)
+        data_binned_min_pm_2_point_5.append(min_val)
+        
+    for key_dt in sorted(grouped_pm_10.keys()):
+        values_pm_10 = grouped_pm_10[key_dt]
+        avg_val = sum(values_pm_10) / len(values_pm_10)
+        data_binned_pm_10.append(avg_val)
 
     # --------------------------------------------------------
     # 2) Handle verified data the same way
@@ -95,7 +105,7 @@ def visualize_data(range_="last_2_hours", offset=0):
         verified_binned.append(dt_bin)
 
     # Verified points at the maximum value of the data for that bin
-    y = max(data_binned + [0])  # If no data, use 0
+    y = max(data_binned_pm_2_point_5 + [0])  # If no data, use 0
     verified_y_values = [y] * len(verified_binned)
 
     # --------------------------------------------------------
@@ -106,13 +116,17 @@ def visualize_data(range_="last_2_hours", offset=0):
     ax.set_facecolor('#22222a')         # Axes background
 
     # Plot the aggregated data
-    ax.plot(times_binned, data_binned, marker='o', linestyle='-', color='#4e4ad9')
+    ax.plot(times_binned, data_binned_pm_2_point_5, marker='o', linestyle='-', color='#4e4ad9')
     
     # Plot the max data
-    ax.scatter(times_binned, data_binned_max, color='#4e4ad9')
+    ax.scatter(times_binned, data_binned_max_pm_2_point_5, color='#4e4ad9')
     
     # Plot the min data
-    ax.scatter(times_binned, data_binned_min, color='#4e4ad9')
+    ax.scatter(times_binned, data_binned_min_pm_2_point_5, color='#4e4ad9')
+    
+    if data_type == "pm_10":
+        # Plot the PM10 data
+        ax.plot(times_binned, data_binned_pm_10, marker='o', linestyle='-', color='#d94a4e')
 
     # Plot the verified data
     ax.scatter(verified_binned, verified_y_values, color='red', zorder=10)
@@ -135,7 +149,12 @@ def visualize_data(range_="last_2_hours", offset=0):
     ax.grid(True, color='gray', linestyle='--', linewidth=0.5)
     
     # legend and labels
-    ax.set_ylabel("PM2.5 (µg/m³)", color='white')
+    if data_type == "pm_2_point_5":
+        ax.set_ylabel("PM2.5 (µg/m³)", color='white')
+    elif data_type == "pm_10":
+        ax.plot([], [], marker='o', linestyle='-', color='#4e4ad9', label='PM2.5')
+        ax.plot([], [], marker='o', linestyle='-', color='#d94a4e', label='PM10')
+        ax.legend(loc='upper left', facecolor='#333339', edgecolor='#333339', framealpha=0.6, labelcolor='white')
 
     plt.tight_layout()
     plt.savefig('data/plot.png')
