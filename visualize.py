@@ -75,6 +75,8 @@ def visualize_data(range_="last_2_hours", offset=0, data_type="pm_2_point_5"):
     data_binned_max_pm_2_point_5 = []
     data_binned_min_pm_2_point_5 = []
     data_binned_pm_10 = []
+    data_binned_max_pm_10 = []
+    data_binned_min_pm_10 = []
     
     for key_dt in sorted(grouped_pm_2_point_5.keys()):
         values_pm_2_point_5 = grouped_pm_2_point_5[key_dt]
@@ -89,7 +91,11 @@ def visualize_data(range_="last_2_hours", offset=0, data_type="pm_2_point_5"):
     for key_dt in sorted(grouped_pm_10.keys()):
         values_pm_10 = grouped_pm_10[key_dt]
         avg_val = sum(values_pm_10) / len(values_pm_10)
+        max_val = max(values_pm_10)
+        min_val = min(values_pm_10)
         data_binned_pm_10.append(avg_val)
+        data_binned_max_pm_10.append(max_val)
+        data_binned_min_pm_10.append(min_val)
 
     # --------------------------------------------------------
     # 2) Handle verified data the same way
@@ -127,6 +133,8 @@ def visualize_data(range_="last_2_hours", offset=0, data_type="pm_2_point_5"):
     if data_type == "pm_10":
         # Plot the PM10 data
         ax.plot(times_binned, data_binned_pm_10, marker='o', linestyle='-', color='#d94a4e')
+        ax.scatter(times_binned, data_binned_max_pm_10, color='#d94a4e')
+        ax.scatter(times_binned, data_binned_min_pm_10, color='#d94a4e')
 
     # Plot the verified data
     ax.scatter(verified_binned, verified_y_values, color='red', zorder=10)
