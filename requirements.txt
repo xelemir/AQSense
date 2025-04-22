@@ -10,3 +10,6 @@ retry-requests
 numpy
 pandas
 openmeteo_requests
+
+
+prophet

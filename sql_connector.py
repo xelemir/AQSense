@@ -13,9 +13,19 @@ class SqlConnector:
             self.cursor.execute('''CREATE TABLE IF NOT EXISTS markers (id INTEGER PRIMARY KEY AUTOINCREMENT, time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)''')
         elif table_name == "particles":
             self.cursor.execute('''CREATE TABLE IF NOT EXISTS particles (id INTEGER PRIMARY KEY AUTOINCREMENT, time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, two_point_five FLOAT NOT NULL, ten FLOAT NOT NULL)''')
-        elif table_name == "push_subscriptions":
-            self.cursor.execute('''CREATE TABLE IF NOT EXISTS push_subscriptions (id INTEGER PRIMARY KEY AUTOINCREMENT, endpoint TEXT NOT NULL, p256dh TEXT NOT NULL, auth TEXT NOT NULL)''')
+        elif table_name == "error_notifications":
+            self.cursor.execute('''CREATE TABLE IF NOT EXISTS error_notifications (id INTEGER PRIMARY KEY AUTOINCREMENT, time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, message TEXT NOT NULL)''')
+    
+    def insert_error_notification(self, message):
+        self.create_table('error_notifications')
+        self.cursor.execute('''INSERT INTO error_notifications (message) VALUES (?)''', (message,))
+        self.conn.commit()
         
+    def get_error_notifications(self):
+        self.create_table('error_notifications')
+        self.cursor.execute('''SELECT * FROM error_notifications ORDER BY time DESC''')
+        return self.cursor.fetchone()
+    
     def insert_marker(self, date=None):
         self.create_table('markers')
         

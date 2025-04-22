@@ -9,3 +9,7 @@ config.py
 config2.py
 *.sqlite
 weather.png
+write_to_server.py
+upload_rendered_graphs.py
+weather.py
+ML.py
