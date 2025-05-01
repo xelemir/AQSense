@@ -16,6 +16,19 @@ class SqlConnector:
         elif table_name == "error_notifications":
             self.cursor.execute('''CREATE TABLE IF NOT EXISTS error_notifications (id INTEGER PRIMARY KEY AUTOINCREMENT, time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, message TEXT NOT NULL)''')
     
+    def get_events_per_day(self):
+        self.create_table('markers')
+        self.cursor.execute('''SELECT DATE(time) AS entry_date, COUNT(*) AS entry_count FROM markers GROUP BY DATE(time) ORDER BY entry_date''')
+        events = self.cursor.fetchall()
+        
+        self.cursor.execute('''SELECT AVG(entry_count) FROM (SELECT COUNT(*) AS entry_count FROM markers GROUP BY DATE(time))''')
+        avg = self.cursor.fetchone()[0]
+        
+        events.append(("avg", avg))
+        return events[::-1]
+        
+        
+    
     def insert_error_notification(self, message):
         self.create_table('error_notifications')
         self.cursor.execute('''INSERT INTO error_notifications (message) VALUES (?)''', (message,))

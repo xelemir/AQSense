@@ -53,6 +53,12 @@ def weather():
     get_weather()
     return send_file("data/weather.png", mimetype='image/png')
 
+@app.route('/events_per_day_raw')
+def events_per_day_raw():
+    sql = SqlConnector("database.db")
+    data = sql.get_events_per_day()
+    return jsonify(data)
+
 @app.route('/set_marker', methods=['POST'])
 def set_marker():
     sql = SqlConnector("database.db")
